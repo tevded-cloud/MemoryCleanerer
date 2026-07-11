@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Memory Cleanerer installer (WiX v5).
+
+  UpgradeCode below is permanent: generated once, must NEVER change. It is how Windows
+  Installer recognizes future versions as upgrades of this same product rather than a
+  separate, side-by-side install. ProductVersion comes from the csproj at build time via
+  the -d Version=... define (see scripts/build-installer.ps1), so it never goes stale here.
+-->
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui"
+     xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util">
+
+  <Package Name="Memory Cleanerer"
+           Manufacturer="TevDed"
+           Version="$(Version)"
+           UpgradeCode="F433A0F7-15AE-4E64-B109-E74F5CD5A823"
+           Language="1033"
+           Scope="perMachine">
+
+    <SummaryInformation Manufacturer="TevDed" Description="Memory Cleanerer Installer" />
+
+    <MajorUpgrade DowngradeErrorMessage="A newer version of Memory Cleanerer is already installed." />
+    <MediaTemplate EmbedCab="yes" />
+
+    <Icon Id="AppIcon.ico" SourceFile="$(IconPath)" />
+    <Property Id="ARPPRODUCTICON" Value="AppIcon.ico" />
+    <Property Id="ARPNOREPAIR" Value="yes" Secure="yes" />
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
+
+    <!--
+      Memory Cleanerer enforces single-instance via a named mutex and can hide itself to the
+      tray on close (RunInBackground) rather than exiting, which would otherwise leave the exe
+      file locked mid-upgrade. Try a graceful close first; force-terminate if it doesn't exit
+      within the timeout. The app is always elevated (its own manifest requires admin), so the
+      Elevated* variants matter as much as the plain ones here.
+    -->
+    <util:CloseApplication Id="CloseMemoryCleanerer"
+                            Target="MemoryCleanerer.exe"
+                            Description="Memory Cleanerer needs to close before setup can continue."
+                            CloseMessage="yes"
+                            ElevatedCloseMessage="yes"
+                            RebootPrompt="no"
+                            Timeout="5"
+                            TerminateProcess="1" />
+
+    <StandardDirectory Id="ProgramFiles64Folder">
+      <Directory Id="INSTALLFOLDER" Name="Memory Cleanerer">
+        <Component Id="MainExecutable">
+          <File Id="MemoryCleanererExe" Source="$(PublishDir)\MemoryCleanerer.exe" KeyPath="yes" />
+        </Component>
+      </Directory>
+    </StandardDirectory>
+
+    <!-- Start Menu entry: this is what makes the app findable in Windows Search. -->
+    <StandardDirectory Id="ProgramMenuFolder">
+      <Component Id="StartMenuShortcut">
+        <Shortcut Id="StartMenuShortcutFile"
+                  Name="Memory Cleanerer"
+                  Description="Free memory cleaner and process monitor"
+                  Target="[INSTALLFOLDER]MemoryCleanerer.exe"
+                  WorkingDirectory="INSTALLFOLDER" />
+        <RegistryValue Root="HKCU" Key="Software\TevDed\Memory Cleanerer" Name="startMenuShortcut"
+                       Type="integer" Value="1" KeyPath="yes" />
+      </Component>
+    </StandardDirectory>
+
+    <!-- Optional (unchecked by default): offered via the feature tree below. -->
+    <StandardDirectory Id="DesktopFolder">
+      <Component Id="DesktopShortcut">
+        <Shortcut Id="DesktopShortcutFile"
+                  Name="Memory Cleanerer"
+                  Description="Free memory cleaner and process monitor"
+                  Target="[INSTALLFOLDER]MemoryCleanerer.exe"
+                  WorkingDirectory="INSTALLFOLDER" />
+        <RegistryValue Root="HKCU" Key="Software\TevDed\Memory Cleanerer" Name="desktopShortcut"
+                       Type="integer" Value="1" KeyPath="yes" />
+      </Component>
+    </StandardDirectory>
+
+    <Feature Id="MainFeature" Title="Memory Cleanerer" Description="The application and Start Menu entry." Level="1">
+      <ComponentRef Id="MainExecutable" />
+      <ComponentRef Id="StartMenuShortcut" />
+    </Feature>
+
+    <!-- Level 1000 > the default install level (1), so this is offered but unchecked by default. -->
+    <Feature Id="DesktopShortcutFeature" Title="Desktop Shortcut" Description="Add a shortcut to your Desktop." Level="1000">
+      <ComponentRef Id="DesktopShortcut" />
+    </Feature>
+
+    <!-- FeatureTree gives us both a directory picker (via its Change... button) and a
+         checkbox for the optional Desktop shortcut feature, in one stock dialog set. -->
+    <ui:WixUI Id="WixUI_FeatureTree" />
+    <WixVariable Id="WixUILicenseRtf" Value="License.rtf" />
+
+  </Package>
+</Wix>

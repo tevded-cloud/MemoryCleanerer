@@ -69,3 +69,6 @@ Desktop.ini
 $RECYCLE.BIN/
 
 dist/
+
+# WiX extension cache (scripts/build-installer.ps1 restores this on demand)
+.wix/
