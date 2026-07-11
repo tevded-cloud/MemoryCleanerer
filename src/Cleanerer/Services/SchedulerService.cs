@@ -235,7 +235,7 @@ public class SchedulerService
         string rule = DescribeRule(hit.Rule);
         return ok
             ? $"Rule '{rule}': {verb} {hit.Target.Name} (PID {hit.Target.Pid})"
-            : $"Rule '{rule}': {verb} for {hit.Target.Name} (PID {hit.Target.Pid}) — {detail}";
+            : $"Rule '{rule}': {verb} for {hit.Target.Name} (PID {hit.Target.Pid}), {detail}";
     }
 
     /// <summary>Drops per-PID bookkeeping for processes that no longer exist (incl. ones we killed).</summary>

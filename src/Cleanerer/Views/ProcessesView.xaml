@@ -5,10 +5,11 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Cleanerer.ViewModels"
              xmlns:conv="clr-namespace:Cleanerer.Converters"
+             xmlns:controls="clr-namespace:Cleanerer.Controls"
              mc:Ignorable="d"
              d:DesignHeight="720" d:DesignWidth="840"
              d:DataContext="{d:DesignInstance Type=vm:ProcessesViewModel}"
-             Background="{StaticResource Brush.Bg}">
+>
     <UserControl.Resources>
         <conv:StringEmptyToVisibilityConverter x:Key="StringEmptyToVisibilityConverter"/>
         <BooleanToVisibilityConverter x:Key="BoolToVis"/>
@@ -64,7 +65,10 @@
             </Grid.RowDefinitions>
 
             <Border Grid.Row="0" Style="{StaticResource Style.Card}" Padding="0">
-                <DataGrid Style="{StaticResource Style.DataGrid}"
+                <!-- The clip keeps the header row and the scrollbar inside the card's rounded
+                     corners; a Border only rounds its own background, not its children. -->
+                <DataGrid controls:RoundedClip.Radius="13"
+                          Style="{StaticResource Style.DataGrid}"
                           ItemsSource="{Binding RowsView}"
                           AutoGenerateColumns="False"
                           IsReadOnly="True"

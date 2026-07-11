@@ -5,7 +5,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
              d:DesignHeight="720" d:DesignWidth="840"
-             Background="{StaticResource Brush.Bg}">
+>
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
     <StackPanel Margin="12,8,12,12">
         <TextBlock Text="About" Style="{StaticResource Style.Text.PageTitle}" Margin="0,0,0,4"/>
@@ -31,7 +31,7 @@
                 </StackPanel>
 
                 <TextBlock Style="{StaticResource Style.Text.Body}" Margin="0,18,0,16">
-                    A free, open memory utility — live memory gauge, working-set trimming,
+                    A free, open memory utility: live memory gauge, working-set trimming,
                     standby-cache purge, process monitoring and automatic rules.
                     All features free, forever.
                 </TextBlock>
@@ -49,7 +49,7 @@
                 <TextBlock Text="What the buttons actually do" FontFamily="{StaticResource Font.Default}"
                            FontSize="15" FontWeight="Bold"
                            Foreground="{StaticResource Brush.TextPrimary}" Margin="0,0,0,4"/>
-                <TextBlock Text="No marketing spin — here's what actually happens on disk and in memory."
+                <TextBlock Text="No marketing spin. Here's what actually happens on disk and in memory."
                            Style="{StaticResource Style.Text.Body}" Margin="0,0,0,16"/>
 
                 <StackPanel Margin="0,0,0,12">
@@ -61,7 +61,7 @@
                         <TextBlock Grid.Column="0" Text="&#x2713;" FontWeight="Bold" FontSize="13"
                                    Foreground="{StaticResource Brush.Accent}" VerticalAlignment="Top" Margin="0,0,10,0"/>
                         <TextBlock Grid.Column="1" Style="{StaticResource Style.Text.Body}" FontSize="12" TextWrapping="Wrap">
-                            <Run Text="Trimming working sets forces pages out of a process's working set — Windows just pages them back in on demand, so freed RAM is a soft, temporary gain."/>
+                            <Run Text="Trimming working sets forces pages out of a process's working set. Windows just pages them back in on demand, so freed RAM is a soft, temporary gain."/>
                         </TextBlock>
                     </Grid>
                 </StackPanel>
@@ -75,7 +75,7 @@
                         <TextBlock Grid.Column="0" Text="&#x2713;" FontWeight="Bold" FontSize="13"
                                    Foreground="{StaticResource Brush.Accent}" VerticalAlignment="Top" Margin="0,0,10,0"/>
                         <TextBlock Grid.Column="1" Style="{StaticResource Style.Text.Body}" FontSize="12" TextWrapping="Wrap">
-                            <Run Text="Purging the standby list clears cached file data from RAM — Windows would evict that same cache automatically the moment something else needed the memory."/>
+                            <Run Text="Purging the standby list clears cached file data from RAM. Windows would evict that same cache automatically the moment something else needed the memory."/>
                         </TextBlock>
                     </Grid>
                 </StackPanel>
@@ -89,7 +89,7 @@
                         <TextBlock Grid.Column="0" Text="&#x2713;" FontWeight="Bold" FontSize="13"
                                    Foreground="{StaticResource Brush.Accent}" VerticalAlignment="Top" Margin="0,0,10,0"/>
                         <TextBlock Grid.Column="1" Style="{StaticResource Style.Text.Body}" FontSize="12" TextWrapping="Wrap">
-                            <Run Text="Automatic rules are checked every 30 seconds against a protected-process whitelist — core Windows processes can never be killed, even by a matching rule."/>
+                            <Run Text="Automatic rules are checked every 30 seconds against a protected-process whitelist. Core Windows processes can never be killed, even by a matching rule."/>
                         </TextBlock>
                     </Grid>
                 </StackPanel>
@@ -103,7 +103,7 @@
                         <TextBlock Grid.Column="0" Text="&#x2713;" FontWeight="Bold" FontSize="13"
                                    Foreground="{StaticResource Brush.Accent}" VerticalAlignment="Top" Margin="0,0,10,0"/>
                         <TextBlock Grid.Column="1" Style="{StaticResource Style.Text.Body}" FontSize="12" TextWrapping="Wrap">
-                            <Run Text="Process monitoring just reads live memory counters per process — nothing is touched until you press Trim or Kill yourself."/>
+                            <Run Text="Process monitoring just reads live memory counters per process. Nothing is touched until you press Trim or Kill yourself."/>
                         </TextBlock>
                     </Grid>
                 </StackPanel>
@@ -130,7 +130,7 @@
                         <Run Text="100% private to your system" FontWeight="Bold"
                              Foreground="{StaticResource Brush.TextPrimary}"/>
                         <LineBreak/>
-                        <Run Text="Cleanerer runs entirely on your PC. It makes no network connections, sends no telemetry, and collects nothing — the only things it touches are your RAM, your settings file, and the Windows APIs it names above."/>
+                        <Run Text="Cleanerer runs entirely on your PC. It makes no network connections, sends no telemetry, and collects nothing. The only things it touches are your RAM, your settings file, and the Windows APIs it names above."/>
                     </TextBlock>
                 </Grid>
             </StackPanel>

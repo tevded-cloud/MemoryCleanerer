@@ -19,7 +19,7 @@
                 <TextBlock Text="Automatic rules" FontFamily="{StaticResource Font.Default}"
                            FontSize="15" FontWeight="Bold"
                            Foreground="{StaticResource Brush.TextPrimary}"/>
-                <TextBlock Text="Cleanerer trims or kills matching processes automatically. Core Windows processes are always protected — a Kill rule aimed at one is blocked."
+                <TextBlock Text="Cleanerer trims or kills matching processes automatically. Core Windows processes are always protected. A Kill rule aimed at one is blocked."
                            Style="{StaticResource Style.Text.Body}" FontSize="12" Margin="0,4,0,12"/>
 
                 <ScrollViewer MaxHeight="200" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
@@ -80,7 +80,7 @@
                                                 Command="{Binding DeleteCommand}"/>
                                     </Grid>
 
-                                    <TextBlock Text="⚠ protected — kill will be blocked"
+                                    <TextBlock Text="⚠ protected, kill will be blocked"
                                                Foreground="{StaticResource Brush.Danger}"
                                                Opacity="0.85"
                                                FontSize="11"
@@ -97,7 +97,7 @@
                 <Button Style="{StaticResource Style.Card.DashedCta}"
                         Command="{Binding AddRuleCommand}"
                         Margin="0,10,0,0"
-                        Content="＋  Add a rule — e.g. trim chrome when it passes 2,048 MB"/>
+                        Content="＋  Add a rule (e.g. trim chrome when it passes 2,048 MB)"/>
             </StackPanel>
         </Border>
 

@@ -125,7 +125,7 @@ public sealed class TrayService : IDisposable
     /// </summary>
     public static string TooltipText(int loadPercent)
     {
-        string text = $"Cleanerer — memory {loadPercent}%";
+        string text = $"Cleanerer: memory {loadPercent}%";
         return text.Length <= 63 ? text : text.Substring(0, 63);
     }
 
@@ -190,7 +190,7 @@ public sealed class TrayService : IDisposable
         }
 
         return result.BytesFreed > 0
-            ? $"{result.Message} — freed {ByteFormat.Megabytes(result.BytesFreed)}"
+            ? $"{result.Message}, freed {ByteFormat.Megabytes(result.BytesFreed)}"
             : result.Message;
     }
 

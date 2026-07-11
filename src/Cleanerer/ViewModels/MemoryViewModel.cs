@@ -23,6 +23,7 @@ public partial class MemoryViewModel : ObservableObject
 {
     private readonly CleanerService _cleaner = new();
     private readonly MemoryInfoService _memoryInfo = new();
+    private readonly GpuUsageService _gpu = new();
     private readonly DispatcherTimer _timer;
 
     /// <summary>Cleanup results, newest first.</summary>
@@ -58,6 +59,11 @@ public partial class MemoryViewModel : ObservableObject
     /// <summary>System (file) cache size, e.g. <c>1,204 MB</c>.</summary>
     [ObservableProperty]
     private string _systemCacheLine = "0 MB";
+
+    /// <summary>GPU load, e.g. <c>7%</c>. Empty while counters initialize or when unavailable
+    /// (the view hides the whole stat pair then).</summary>
+    [ObservableProperty]
+    private string _gpuLine = string.Empty;
 
     /// <summary>Session average physical memory used, e.g. <c>16,662 MB (51%)</c>.</summary>
     [ObservableProperty]
@@ -138,6 +144,11 @@ public partial class MemoryViewModel : ObservableObject
         PagefileLine = ByteFormat.MegabytesWithPercent(snapshot.PageFileUsedBytes, pageFilePercent);
         VirtualLine = ByteFormat.MegabytesWithPercent(snapshot.VirtualUsedBytes, virtualPercent);
         SystemCacheLine = ByteFormat.Megabytes(snapshot.SystemCacheBytes);
+
+        // Empty until the GPU counters finish their background build (or forever on machines
+        // without them); the view hides the whole "GPU:" pair while this is empty.
+        int? gpuPercent = _gpu.TryRead();
+        GpuLine = gpuPercent is int gpu ? $"{gpu}%" : string.Empty;
 
         AvgLine = ByteFormat.MegabytesWithPercent(stats.AvgUsedBytes, stats.AvgPercent);
         MaxLine = ByteFormat.MegabytesWithPercent(stats.MaxUsedBytes, stats.MaxPercent);

@@ -49,6 +49,9 @@
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <!-- GPU utilization is read from the "GPU Engine" performance counters (same source Task
+         Manager uses); PerformanceCounter is not part of the base net8.0-windows surface. -->
+    <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="8.0.1" />
   </ItemGroup>
 
 </Project>
