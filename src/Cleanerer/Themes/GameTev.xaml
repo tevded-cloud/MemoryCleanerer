@@ -388,6 +388,51 @@
         </Setter>
     </Style>
 
+    <!-- ==================== Compact ghost/danger buttons ====================
+         Used by the Processes page grid's per-row Trim/Kill actions: same look as
+         Style.Button.Ghost / a danger outline, but sized down (26px tall) to fit inline in a
+         DataGrid row without inflating the row height. -->
+    <Style x:Key="Style.Button.GhostCompact" TargetType="Button" BasedOn="{StaticResource Style.Button.Ghost}">
+        <Setter Property="Padding" Value="10,4"/>
+        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="Height" Value="26"/>
+    </Style>
+
+    <Style x:Key="Style.Button.DangerOutlineCompact" TargetType="Button">
+        <Setter Property="FontFamily" Value="{StaticResource Font.Default}"/>
+        <Setter Property="Foreground" Value="{StaticResource Brush.Danger}"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="Padding" Value="10,4"/>
+        <Setter Property="Height" Value="26"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Bd"
+                            Background="Transparent"
+                            BorderBrush="{StaticResource Brush.Danger}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{StaticResource Radius.Button}"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           RecognizesAccessKey="True"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{StaticResource Brush.DangerDim}"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Bd" Property="Opacity" Value="0.5"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <!-- ==================== Small numeric TextBox ====================
          Inline value editor for the Options page (e.g. "every [ 5 ] minutes"). Card background,
          themed border that lights up on focus, centered text. -->
@@ -425,6 +470,110 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+    </Style>
+
+    <!-- ==================== Search TextBox ====================
+         Wider, left-aligned sibling of Style.TextBox.Numeric for the Processes page search box
+         (a watermark TextBlock is overlaid in the view itself, toggled by
+         StringEmptyToVisibilityConverter, since TextBox has no built-in placeholder). -->
+    <Style x:Key="Style.TextBox.Search" TargetType="TextBox" BasedOn="{StaticResource Style.TextBox.Numeric}">
+        <Setter Property="Width" Value="220"/>
+        <Setter Property="FontWeight" Value="Normal"/>
+        <Setter Property="TextAlignment" Value="Left"/>
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+    </Style>
+
+    <!-- ==================== DataGrid (Processes page) ====================
+         Transparent/borderless card-hosted grid: no gridlines, muted uppercase column headers,
+         hover/selected row backgrounds instead of per-cell selection chrome, and a 1px bottom
+         border per row instead of full cell borders. -->
+    <Style x:Key="Style.DataGridColumnHeader" TargetType="DataGridColumnHeader">
+        <Setter Property="Background" Value="{StaticResource Brush.Card}"/>
+        <Setter Property="Foreground" Value="{StaticResource Brush.SectionLabel}"/>
+        <Setter Property="FontFamily" Value="{StaticResource Font.Default}"/>
+        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Padding" Value="12,8"/>
+        <Setter Property="BorderBrush" Value="{StaticResource Brush.CardBorder}"/>
+        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="DataGridColumnHeader">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                           VerticalAlignment="Center"
+                                           RecognizesAccessKey="True"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="Style.DataGridRow" TargetType="DataGridRow">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="#1A2029"/>
+        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+        <Setter Property="Height" Value="36"/>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#1A2029"/>
+            </Trigger>
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Background" Value="{StaticResource Brush.AccentDim}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!--
+        Overrides the default DataGridCell template, which otherwise paints its own blue
+        selection/focus chrome per cell; that chrome is suppressed here so row-level selection
+        (Style.DataGridRow, above) is the only visual selection cue.
+    -->
+    <Style x:Key="Style.DataGridCell" TargetType="DataGridCell">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Foreground" Value="{StaticResource Brush.TextPrimary}"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Padding" Value="12,0"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="DataGridCell">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter VerticalAlignment="Center"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="Style.DataGrid" TargetType="DataGrid">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="GridLinesVisibility" Value="None"/>
+        <Setter Property="HorizontalGridLinesBrush" Value="Transparent"/>
+        <Setter Property="VerticalGridLinesBrush" Value="Transparent"/>
+        <Setter Property="RowBackground" Value="Transparent"/>
+        <Setter Property="AlternatingRowBackground" Value="Transparent"/>
+        <Setter Property="HeadersVisibility" Value="Column"/>
+        <Setter Property="ColumnHeaderHeight" Value="34"/>
+        <Setter Property="RowHeight" Value="36"/>
+        <Setter Property="RowHeaderWidth" Value="0"/>
+        <Setter Property="CanUserResizeRows" Value="False"/>
+        <Setter Property="FontFamily" Value="{StaticResource Font.Default}"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Foreground" Value="{StaticResource Brush.TextPrimary}"/>
+        <Setter Property="ColumnHeaderStyle" Value="{StaticResource Style.DataGridColumnHeader}"/>
+        <Setter Property="RowStyle" Value="{StaticResource Style.DataGridRow}"/>
+        <Setter Property="CellStyle" Value="{StaticResource Style.DataGridCell}"/>
     </Style>
 
 </ResourceDictionary>

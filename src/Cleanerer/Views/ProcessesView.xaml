@@ -3,15 +3,161 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:Cleanerer.ViewModels"
+             xmlns:conv="clr-namespace:Cleanerer.Converters"
              mc:Ignorable="d"
              d:DesignHeight="720" d:DesignWidth="840"
+             d:DataContext="{d:DesignInstance Type=vm:ProcessesViewModel}"
              Background="{StaticResource Brush.Bg}">
-    <StackPanel Margin="32">
-        <TextBlock Text="PRO — FREE HERE" Style="{StaticResource Style.Text.Kicker}"/>
-        <TextBlock Text="Processes" Style="{StaticResource Style.Text.PageTitle}" Margin="0,6,0,10"/>
-        <TextBlock Text="Monitor what's running, trim memory hogs, and let Cleanerer auto-manage the noisy ones."
-                   Style="{StaticResource Style.Text.Body}" Margin="0,0,0,24"/>
+    <UserControl.Resources>
+        <conv:StringEmptyToVisibilityConverter x:Key="StringEmptyToVisibilityConverter"/>
+    </UserControl.Resources>
 
-        <Border Style="{StaticResource Style.Card}" Padding="24" Height="220"/>
-    </StackPanel>
+    <Grid Margin="32">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- ===================== Header ===================== -->
+        <StackPanel Grid.Row="0">
+            <TextBlock Text="PRO — FREE HERE" Style="{StaticResource Style.Text.Kicker}"/>
+            <TextBlock Text="Processes" Style="{StaticResource Style.Text.PageTitle}" Margin="0,6,0,10"/>
+            <TextBlock Text="Monitor what's running, trim memory hogs, and let Cleanerer auto-manage the noisy ones."
+                       Style="{StaticResource Style.Text.Body}" Margin="0,0,0,20"/>
+        </StackPanel>
+
+        <!-- ===================== Toolbar: search + aggregate line ===================== -->
+        <Grid Grid.Row="1" Margin="0,0,0,14">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid Grid.Column="0" HorizontalAlignment="Left">
+                <TextBox x:Name="SearchBox"
+                         Style="{StaticResource Style.TextBox.Search}"
+                         Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
+                <TextBlock Text="Search processes…"
+                           Style="{StaticResource Style.Text.Body}"
+                           FontSize="13"
+                           IsHitTestVisible="False"
+                           VerticalAlignment="Center"
+                           Margin="12,0,0,0"
+                           Visibility="{Binding SearchText, Converter={StaticResource StringEmptyToVisibilityConverter}}"/>
+            </Grid>
+
+            <TextBlock Grid.Column="1"
+                       Text="{Binding AggregateLine}"
+                       Style="{StaticResource Style.Text.Body}"
+                       FontSize="12"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Center"/>
+        </Grid>
+
+        <!-- ===================== Grid card + status line ===================== -->
+        <Grid Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Border Grid.Row="0" Style="{StaticResource Style.Card}" Padding="0">
+                <DataGrid Style="{StaticResource Style.DataGrid}"
+                          ItemsSource="{Binding RowsView}"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          CanUserAddRows="False"
+                          CanUserDeleteRows="False"
+                          CanUserReorderColumns="False"
+                          SelectionMode="Single"
+                          SelectionUnit="FullRow">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="NAME" Binding="{Binding Name}" Width="*">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+
+                        <DataGridTextColumn Header="PID" Binding="{Binding Pid}" Width="70"/>
+
+                        <DataGridTextColumn Header="CPU"
+                                             Binding="{Binding CpuPercentFormatted}"
+                                             SortMemberPath="CpuPercent"
+                                             Width="80">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextAlignment" Value="Right"/>
+                                    <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+
+                        <DataGridTextColumn Header="WORKING SET"
+                                             Binding="{Binding WorkingSetFormatted}"
+                                             SortMemberPath="WorkingSetBytes"
+                                             Width="110">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextAlignment" Value="Right"/>
+                                    <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+
+                        <DataGridTextColumn Header="PRIVATE"
+                                             Binding="{Binding PrivateFormatted}"
+                                             SortMemberPath="PrivateBytes"
+                                             Width="110">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextAlignment" Value="Right"/>
+                                    <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+
+                        <DataGridTemplateColumn Header="ACTIONS" Width="140" CanUserSort="False">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate DataType="{x:Type vm:ProcessRowViewModel}">
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Button Content="Trim"
+                                                Style="{StaticResource Style.Button.GhostCompact}"
+                                                Command="{Binding TrimCommand}"
+                                                Margin="0,0,6,0"/>
+                                        <Button Content="Kill"
+                                                Style="{StaticResource Style.Button.DangerOutlineCompact}"
+                                                Command="{Binding KillCommand}"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+
+            <!-- ===================== Status line ===================== -->
+            <TextBlock Grid.Row="1"
+                       Text="{Binding StatusMessage}"
+                       Margin="4,10,0,0"
+                       FontSize="12"
+                       FontWeight="SemiBold"
+                       Visibility="{Binding StatusMessage, Converter={StaticResource StringEmptyToVisibilityConverter}, ConverterParameter=Invert}">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Foreground" Value="{StaticResource Brush.Success}"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding StatusIsError}" Value="True">
+                                <Setter Property="Foreground" Value="{StaticResource Brush.Danger}"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+        </Grid>
+    </Grid>
 </UserControl>
