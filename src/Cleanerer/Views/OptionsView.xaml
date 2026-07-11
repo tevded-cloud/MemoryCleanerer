@@ -1,0 +1,17 @@
+<UserControl x:Class="Cleanerer.Views.OptionsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignHeight="720" d:DesignWidth="840"
+             Background="{StaticResource Brush.Bg}">
+    <StackPanel Margin="32">
+        <TextBlock Text="CONTROL" Style="{StaticResource Style.Text.Kicker}"/>
+        <TextBlock Text="Options" Style="{StaticResource Style.Text.PageTitle}" Margin="0,6,0,10"/>
+        <TextBlock Text="Timers, thresholds and startup behavior for Cleanerer."
+                   Style="{StaticResource Style.Text.Body}" Margin="0,0,0,24"/>
+
+        <Border Style="{StaticResource Style.Card}" Padding="24" Height="220"/>
+    </StackPanel>
+</UserControl>

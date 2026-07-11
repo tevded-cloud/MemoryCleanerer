@@ -1,0 +1,47 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <AssemblyName>Cleanerer</AssemblyName>
+    <Product>Cleanerer</Product>
+    <Version>0.1.0</Version>
+    <AssemblyVersion>0.1.0.0</AssemblyVersion>
+    <FileVersion>0.1.0.0</FileVersion>
+    <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
+    <!--
+      WFAC010: WinForms' analyzer flags the manifest's PerMonitorV2 DPI settings as
+      redundant with its own high-DPI API, but this is a WPF app (UseWindowsForms is
+      only enabled for the future tray icon) — the manifest is the correct, WPF-standard
+      way to declare DPI awareness, so this warning is a false positive here.
+    -->
+    <NoWarn>$(NoWarn);WFAC010</NoWarn>
+  </PropertyGroup>
+
+  <!--
+    Single-exe publish. This PropertyGroup only takes effect when explicitly requested via
+    /p:PublishSingleExe=true, so normal Debug/Release builds are unaffected.
+
+    Usage:
+      dotnet publish -c Release -r win-x64 /p:PublishSingleExe=true /p:PublishSingleFile=true /p:SelfContained=true
+
+    Or simply:
+      dotnet publish -c Release -r win-x64 /p:PublishSingleFile=true /p:SelfContained=true
+  -->
+  <PropertyGroup Condition="'$(PublishSingleExe)'=='true'">
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+  </ItemGroup>
+
+</Project>
