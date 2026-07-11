@@ -234,7 +234,9 @@ public partial class ProcessesViewModel : ObservableObject
 
     private async Task KillRowAsync(ProcessRowViewModel row)
     {
-        (bool ok, string message) = await Task.Run(() => _monitor.KillProcess(row.Pid));
+        // The manual button goes through the whitelist too: this app runs elevated with
+        // SeDebugPrivilege, so a misclicked kill on csrss/lsass would crash the session.
+        (bool ok, string message) = await Task.Run(() => _monitor.KillProcessChecked(row.Pid, row.Name));
         SetStatus(ok, $"Kill {row.Name} ({row.Pid}): {message}");
 
         if (ok)

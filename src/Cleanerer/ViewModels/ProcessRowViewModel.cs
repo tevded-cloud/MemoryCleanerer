@@ -43,7 +43,7 @@ public partial class ProcessRowViewModel : ObservableObject
     /// <summary>Trims this process's working set (see <see cref="ProcessMonitorService.TrimProcess"/>).</summary>
     public IAsyncRelayCommand TrimCommand { get; }
 
-    /// <summary>Kills this process outright (see <see cref="ProcessMonitorService.KillProcess"/>).</summary>
+    /// <summary>Kills this process, whitelist-checked (see <see cref="ProcessMonitorService.KillProcessChecked"/>).</summary>
     public IAsyncRelayCommand KillCommand { get; }
 
     public ProcessRowViewModel(ProcessSample sample, Func<ProcessRowViewModel, Task> trim, Func<ProcessRowViewModel, Task> kill)

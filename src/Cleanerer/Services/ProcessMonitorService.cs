@@ -147,37 +147,6 @@ public class ProcessMonitorService
     }
 
     /// <summary>
-    /// Kills a single process outright, WITHOUT consulting the whitelist.
-    ///
-    /// unit-6b: the kill whitelist now lives in <see cref="ProcessGuard"/>. Any automatic /
-    /// rules-driven kill MUST go through <see cref="KillProcessChecked"/>, which re-resolves the live
-    /// process name by PID and refuses protected processes immediately before pulling the trigger.
-    /// This raw variant stays <c>internal</c> and is reserved for the explicit, user-initiated Kill
-    /// button on the Processes page (a deliberate, human-in-the-loop action); no automatic caller may
-    /// use it.
-    /// </summary>
-    /// <returns><c>(true, message)</c> on success; <c>(false, message)</c> otherwise. Never throws.</returns>
-    internal (bool Ok, string Message) KillProcess(int pid)
-    {
-        try
-        {
-            using Process proc = Process.GetProcessById(pid);
-            string name = proc.ProcessName;
-            proc.Kill();
-            return (true, $"Killed {name} ({pid})");
-        }
-        catch (ArgumentException)
-        {
-            // GetProcessById throws ArgumentException when the PID is not running.
-            return (false, "Process already exited");
-        }
-        catch (Exception ex)
-        {
-            return (false, ex.Message);
-        }
-    }
-
-    /// <summary>
     /// Whitelist-checked kill for automatic/rules-driven callers. Defense in depth, in this order:
     /// <list type="number">
     ///   <item>Re-check the <paramref name="sampledName"/> the caller matched on against
