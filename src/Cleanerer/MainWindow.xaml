@@ -54,7 +54,10 @@
             <Setter Property="Padding" Value="8,6"/>
             <Setter Property="Margin" Value="0,2"/>
             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-            <Setter Property="Focusable" Value="False"/>
+            <!-- Items MUST stay focusable: ListBoxItem's mouse-down handler only selects an item
+                 it can successfully focus, so Focusable=False makes nav clicks dead on arrival.
+                 The focus rectangle is suppressed instead. -->
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ListBoxItem">

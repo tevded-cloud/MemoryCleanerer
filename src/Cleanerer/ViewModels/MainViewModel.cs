@@ -88,13 +88,28 @@ public partial class MainViewModel : ObservableObject
             _navigating = false;
         }
 
-        CurrentPage = item.Key switch
+        // A page constructor that throws inside this binding-driven call would otherwise be
+        // swallowed by the WPF binding engine and look like a dead nav click — log and surface it.
+        try
         {
-            "Memory" => new MemoryView(),
-            "Processes" => new ProcessesView(),
-            "Options" => new OptionsView(),
-            "About" => new AboutView(),
-            _ => null,
-        };
+            CurrentPage = item.Key switch
+            {
+                "Memory" => new MemoryView(),
+                "Processes" => new ProcessesView(),
+                "Options" => new OptionsView(),
+                "About" => new AboutView(),
+                _ => null,
+            };
+        }
+        catch (System.Exception ex)
+        {
+            App.LogError($"Navigate({item.Key})", ex);
+            CurrentPage = new System.Windows.Controls.TextBlock
+            {
+                Text = $"This page failed to load:\n{ex.Message}\n\nSee %AppData%\\Cleanerer\\error.log.",
+                Margin = new System.Windows.Thickness(32),
+                TextWrapping = System.Windows.TextWrapping.Wrap,
+            };
+        }
     }
 }
