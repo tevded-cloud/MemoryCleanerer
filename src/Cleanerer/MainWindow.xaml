@@ -161,18 +161,18 @@
                         <TextBlock Text="MONITOR" Style="{StaticResource Style.Text.SectionLabel}" Margin="4,28,0,8"/>
                         <ListBox Style="{StaticResource Style.NavListBox}"
                                  ItemsSource="{Binding MonitorItems}"
-                                 SelectedItem="{Binding SelectedNav, Mode=TwoWay}"/>
+                                 SelectedItem="{Binding SelectedMonitor, Mode=TwoWay}"/>
 
                         <TextBlock Text="CONTROL" Style="{StaticResource Style.Text.SectionLabel}" Margin="4,20,0,8"/>
                         <ListBox Style="{StaticResource Style.NavListBox}"
                                  ItemsSource="{Binding ControlItems}"
-                                 SelectedItem="{Binding SelectedNav, Mode=TwoWay}"/>
+                                 SelectedItem="{Binding SelectedControl, Mode=TwoWay}"/>
                     </StackPanel>
 
                     <ListBox DockPanel.Dock="Bottom"
                              Style="{StaticResource Style.NavListBox}"
                              ItemsSource="{Binding AboutItems}"
-                             SelectedItem="{Binding SelectedNav, Mode=TwoWay}"/>
+                             SelectedItem="{Binding SelectedAbout, Mode=TwoWay}"/>
 
                 </DockPanel>
             </Border>
