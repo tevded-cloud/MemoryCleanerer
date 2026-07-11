@@ -136,7 +136,7 @@
             </StackPanel>
         </Border>
 
-        <TextBlock Text="Made by TevDed · styled after GameTev"
+        <TextBlock Text="Made by TevDed"
                    Style="{StaticResource Style.Text.Body}" FontSize="11" Margin="2,16,0,0"/>
     </StackPanel>
     </ScrollViewer>
