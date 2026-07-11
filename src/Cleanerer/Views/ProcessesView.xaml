@@ -23,8 +23,7 @@
 
         <!-- ===================== Header ===================== -->
         <StackPanel Grid.Row="0">
-            <TextBlock Text="PRO — FREE HERE" Style="{StaticResource Style.Text.Kicker}"/>
-            <TextBlock Text="Processes" Style="{StaticResource Style.Text.PageTitle}" Margin="0,2,0,4"/>
+            <TextBlock Text="Processes" Style="{StaticResource Style.Text.PageTitle}" Margin="0,0,0,4"/>
             <TextBlock Text="Monitor what's running, trim memory hogs, and let Cleanerer auto-manage the noisy ones."
                        Style="{StaticResource Style.Text.Body}" Margin="0,0,0,10"/>
         </StackPanel>

@@ -224,10 +224,35 @@ public sealed class TrayService : IDisposable
     }
 
     /// <summary>
-    /// Draws a small accent-colored rounded-square icon with a white "C" glyph, matching the
-    /// title bar / sidebar badge look (see MainWindow.xaml). Built once at startup and cached.
+    /// Loads the real app icon (Assets/app.ico, same one the exe and window use) from the WPF
+    /// resource stream; falls back to the original drawn badge if the resource is unavailable.
+    /// Built once at startup and cached.
     /// </summary>
     private static System.Drawing.Icon BuildIcon()
+    {
+        try
+        {
+            var uri = new Uri("pack://application:,,,/Assets/app.ico");
+            using var stream = System.Windows.Application.GetResourceStream(uri)?.Stream;
+            if (stream is not null)
+            {
+                // The size hint picks the closest embedded entry (the .ico carries 16-256px).
+                return new System.Drawing.Icon(stream, 32, 32);
+            }
+        }
+        catch
+        {
+            // Resource missing/corrupt — fall through to the drawn fallback below.
+        }
+
+        return DrawFallbackIcon();
+    }
+
+    /// <summary>
+    /// Draws a small accent-colored rounded-square icon with a white "C" glyph, matching the
+    /// title bar badge look. Only used if the packed app.ico resource cannot be loaded.
+    /// </summary>
+    private static System.Drawing.Icon DrawFallbackIcon()
     {
         const int size = 32;
 

@@ -13,6 +13,7 @@
         WindowStyle="None"
         AllowsTransparency="True"
         Background="Transparent"
+        Icon="Assets/app.ico"
         FontFamily="{StaticResource Font.Default}"
         d:DataContext="{d:DesignInstance Type=vm:MainViewModel}">
 
@@ -119,9 +120,10 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="16,0,0,0" VerticalAlignment="Center">
-                <Border Width="22" Height="22" CornerRadius="6" Background="{StaticResource Brush.Accent}">
-                    <TextBlock Text="C" FontWeight="Bold" FontSize="12" Foreground="White"
-                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <Border Width="22" Height="22" CornerRadius="6">
+                    <Border.Background>
+                        <ImageBrush ImageSource="pack://application:,,,/Assets/app-logo.png" Stretch="UniformToFill"/>
+                    </Border.Background>
                 </Border>
                 <TextBlock Text="Cleanerer" FontWeight="SemiBold" FontSize="13"
                            Foreground="{StaticResource Brush.TextPrimary}"

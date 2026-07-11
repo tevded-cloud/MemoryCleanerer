@@ -8,8 +8,7 @@
              Background="{StaticResource Brush.Bg}">
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
     <StackPanel Margin="12,8,12,12">
-        <TextBlock Text="SHIP" Style="{StaticResource Style.Text.Kicker}"/>
-        <TextBlock Text="About" Style="{StaticResource Style.Text.PageTitle}" Margin="0,2,0,4"/>
+        <TextBlock Text="About" Style="{StaticResource Style.Text.PageTitle}" Margin="0,0,0,4"/>
         <TextBlock Text="Version, credits, and an honest account of what this app does."
                    Style="{StaticResource Style.Text.Body}" Margin="0,0,0,10"/>
 
@@ -17,9 +16,10 @@
         <Border Style="{StaticResource Style.Card}" Padding="24" Margin="0,0,0,16">
             <StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <Border Width="48" Height="48" CornerRadius="14" Background="{StaticResource Brush.Accent}">
-                        <TextBlock Text="C" FontWeight="Bold" FontSize="20" Foreground="White"
-                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <Border Width="48" Height="48" CornerRadius="14">
+                        <Border.Background>
+                            <ImageBrush ImageSource="pack://application:,,,/Assets/app-logo.png" Stretch="UniformToFill"/>
+                        </Border.Background>
                     </Border>
                     <StackPanel Margin="14,0,0,0" VerticalAlignment="Center">
                         <TextBlock Text="Cleanerer" FontFamily="{StaticResource Font.Default}"

@@ -12,8 +12,7 @@
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="12,8,12,12">
             <!-- ===================== Header ===================== -->
-            <TextBlock Text="CONTROL" Style="{StaticResource Style.Text.Kicker}"/>
-            <TextBlock Text="Options" Style="{StaticResource Style.Text.PageTitle}" Margin="0,2,0,4"/>
+            <TextBlock Text="Options" Style="{StaticResource Style.Text.PageTitle}" Margin="0,0,0,4"/>
             <TextBlock Text="Timers, thresholds and startup behavior for Cleanerer."
                        Style="{StaticResource Style.Text.Body}" Margin="0,0,0,10"/>
 

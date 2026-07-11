@@ -21,7 +21,14 @@
       way to declare DPI awareness, so this warning is a false positive here.
     -->
     <NoWarn>$(NoWarn);WFAC010</NoWarn>
+    <ApplicationIcon>Assets\app.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <!-- app.ico doubles as the tray/window icon at runtime; app-logo.png is the in-app logo tile. -->
+    <Resource Include="Assets\app.ico" />
+    <Resource Include="Assets\app-logo.png" />
+  </ItemGroup>
 
   <!--
     Single-exe publish. This PropertyGroup only takes effect when explicitly requested via
