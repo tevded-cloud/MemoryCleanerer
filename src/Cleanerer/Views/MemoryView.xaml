@@ -122,8 +122,9 @@
         -->
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
+                <!-- Tasks gets the wider share: its 2x2 buttons carry 18px titles. -->
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="2*"/>
             </Grid.ColumnDefinitions>
 
             <!-- ===================== Tasks card ===================== -->
@@ -152,13 +153,13 @@
                         <Button Style="{StaticResource Style.Button.GhostRow}"
                                 Command="{Binding TrimCommand}"
                                 IsEnabled="{Binding IsNotBusy}"
-                                Padding="10,9"
+                                Padding="12,10"
                                 Margin="0,0,6,6">
                             <StackPanel>
-                                <TextBlock Text="Trim working sets" FontWeight="SemiBold" FontSize="13"
+                                <TextBlock Text="Trim working sets" FontWeight="SemiBold" FontSize="18" TextTrimming="CharacterEllipsis"
                                            Foreground="{StaticResource Brush.TextPrimary}"/>
                                 <TextBlock Text="Release unused RAM."
-                                           Style="{StaticResource Style.Text.Body}" FontSize="11" Margin="0,2,0,0"
+                                           Style="{StaticResource Style.Text.Body}" FontSize="15" Margin="0,2,0,0"
                                            TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
                             </StackPanel>
                         </Button>
@@ -166,13 +167,13 @@
                         <Button Style="{StaticResource Style.Button.GhostRow}"
                                 Command="{Binding ClearCacheCommand}"
                                 IsEnabled="{Binding IsNotBusy}"
-                                Padding="10,9"
+                                Padding="12,10"
                                 Margin="6,0,0,6">
                             <StackPanel>
-                                <TextBlock Text="Clear system cache" FontWeight="SemiBold" FontSize="13"
+                                <TextBlock Text="Clear system cache" FontWeight="SemiBold" FontSize="18" TextTrimming="CharacterEllipsis"
                                            Foreground="{StaticResource Brush.TextPrimary}"/>
                                 <TextBlock Text="Flush cache. Needs admin."
-                                           Style="{StaticResource Style.Text.Body}" FontSize="11" Margin="0,2,0,0"
+                                           Style="{StaticResource Style.Text.Body}" FontSize="15" Margin="0,2,0,0"
                                            TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
                             </StackPanel>
                         </Button>
@@ -180,13 +181,13 @@
                         <Button Style="{StaticResource Style.Button.GhostRow}"
                                 Command="{Binding ClearClipboardCommand}"
                                 IsEnabled="{Binding IsNotBusy}"
-                                Padding="10,9"
+                                Padding="12,10"
                                 Margin="0,6,6,0">
                             <StackPanel>
-                                <TextBlock Text="Clear clipboard" FontWeight="SemiBold" FontSize="13"
+                                <TextBlock Text="Clear clipboard" FontWeight="SemiBold" FontSize="18" TextTrimming="CharacterEllipsis"
                                            Foreground="{StaticResource Brush.TextPrimary}"/>
                                 <TextBlock Text="Wipe clipboard contents."
-                                           Style="{StaticResource Style.Text.Body}" FontSize="11" Margin="0,2,0,0"
+                                           Style="{StaticResource Style.Text.Body}" FontSize="15" Margin="0,2,0,0"
                                            TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
                             </StackPanel>
                         </Button>
@@ -194,13 +195,13 @@
                         <Button Style="{StaticResource Style.Button.GhostRow}"
                                 Command="{Binding RestartExplorerCommand}"
                                 IsEnabled="{Binding IsNotBusy}"
-                                Padding="10,9"
+                                Padding="12,10"
                                 Margin="6,6,0,0">
                             <StackPanel>
-                                <TextBlock Text="Restart Explorer" FontWeight="SemiBold" FontSize="13"
+                                <TextBlock Text="Restart Explorer" FontWeight="SemiBold" FontSize="18" TextTrimming="CharacterEllipsis"
                                            Foreground="{StaticResource Brush.TextPrimary}"/>
-                                <TextBlock Text="Reclaim leaked shell memory."
-                                           Style="{StaticResource Style.Text.Body}" FontSize="11" Margin="0,2,0,0"
+                                <TextBlock Text="Reclaim shell memory."
+                                           Style="{StaticResource Style.Text.Body}" FontSize="15" Margin="0,2,0,0"
                                            TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
                             </StackPanel>
                         </Button>
