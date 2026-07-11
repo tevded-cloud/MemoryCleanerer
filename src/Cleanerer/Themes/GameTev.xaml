@@ -6,6 +6,8 @@
     <Color x:Key="Color.Sidebar">#0E1219</Color>
     <Color x:Key="Color.Card">#141922</Color>
     <Color x:Key="Color.CardBorder">#232A36</Color>
+    <!-- Subtler than Color.CardBorder: used for hairline row dividers/hover inside a card (e.g. DataGrid rows). -->
+    <Color x:Key="Color.RowDivider">#1A2029</Color>
 
     <Color x:Key="Color.Accent">#8286F5</Color>
     <Color x:Key="Color.AccentHover">#9A9DF8</Color>
@@ -23,6 +25,7 @@
     <SolidColorBrush x:Key="Brush.Sidebar" Color="{StaticResource Color.Sidebar}"/>
     <SolidColorBrush x:Key="Brush.Card" Color="{StaticResource Color.Card}"/>
     <SolidColorBrush x:Key="Brush.CardBorder" Color="{StaticResource Color.CardBorder}"/>
+    <SolidColorBrush x:Key="Brush.RowDivider" Color="{StaticResource Color.RowDivider}"/>
 
     <SolidColorBrush x:Key="Brush.Accent" Color="{StaticResource Color.Accent}"/>
     <SolidColorBrush x:Key="Brush.AccentHover" Color="{StaticResource Color.AccentHover}"/>
@@ -515,12 +518,12 @@
 
     <Style x:Key="Style.DataGridRow" TargetType="DataGridRow">
         <Setter Property="Background" Value="Transparent"/>
-        <Setter Property="BorderBrush" Value="#1A2029"/>
+        <Setter Property="BorderBrush" Value="{StaticResource Brush.RowDivider}"/>
         <Setter Property="BorderThickness" Value="0,0,0,1"/>
         <Setter Property="Height" Value="36"/>
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="#1A2029"/>
+                <Setter Property="Background" Value="{StaticResource Brush.RowDivider}"/>
             </Trigger>
             <Trigger Property="IsSelected" Value="True">
                 <Setter Property="Background" Value="{StaticResource Brush.AccentDim}"/>

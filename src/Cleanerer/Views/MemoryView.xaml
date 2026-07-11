@@ -33,7 +33,7 @@
         <Border Grid.Row="1"
                 Style="{StaticResource Style.Card}"
                 Padding="24"
-                Margin="0,0,0,20">
+                Margin="0,0,0,16">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -124,7 +124,7 @@
             <Border Grid.Column="0"
                     Style="{StaticResource Style.Card}"
                     Padding="20"
-                    Margin="0,0,10,0"
+                    Margin="0,0,8,0"
                     VerticalAlignment="Top">
                 <StackPanel>
                     <TextBlock Text="Tasks" FontFamily="{StaticResource Font.Default}"
@@ -187,7 +187,7 @@
             <Border Grid.Column="1"
                     Style="{StaticResource Style.Card}"
                     Padding="20"
-                    Margin="10,0,0,0">
+                    Margin="8,0,0,0">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>

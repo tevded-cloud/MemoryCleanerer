@@ -27,7 +27,7 @@
             <TextBlock Text="PRO — FREE HERE" Style="{StaticResource Style.Text.Kicker}"/>
             <TextBlock Text="Processes" Style="{StaticResource Style.Text.PageTitle}" Margin="0,6,0,10"/>
             <TextBlock Text="Monitor what's running, trim memory hogs, and let Cleanerer auto-manage the noisy ones."
-                       Style="{StaticResource Style.Text.Body}" Margin="0,0,0,20"/>
+                       Style="{StaticResource Style.Text.Body}" Margin="0,0,0,24"/>
         </StackPanel>
 
         <!-- ===================== Toolbar: search + aggregate line ===================== -->
@@ -163,7 +163,7 @@
         </Grid>
 
         <!-- ===================== Automatic rules card ===================== -->
-        <Border Grid.Row="3" Style="{StaticResource Style.Card}" Padding="20" Margin="0,18,0,0">
+        <Border Grid.Row="3" Style="{StaticResource Style.Card}" Padding="20" Margin="0,16,0,0">
             <StackPanel>
                 <TextBlock Text="Automatic rules" Style="{StaticResource Style.Text.PageTitle}" FontSize="17"/>
                 <TextBlock Text="Cleanerer trims or kills matching processes automatically. Core Windows processes are always protected — a Kill rule aimed at one is blocked."

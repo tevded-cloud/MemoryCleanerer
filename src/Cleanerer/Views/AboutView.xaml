@@ -9,9 +9,107 @@
     <StackPanel Margin="32">
         <TextBlock Text="SHIP" Style="{StaticResource Style.Text.Kicker}"/>
         <TextBlock Text="About" Style="{StaticResource Style.Text.PageTitle}" Margin="0,6,0,10"/>
-        <TextBlock Text="Cleanerer is free, forever. Version and credits live here."
+        <TextBlock Text="Version, credits, and an honest account of what this app does."
                    Style="{StaticResource Style.Text.Body}" Margin="0,0,0,24"/>
 
-        <Border Style="{StaticResource Style.Card}" Padding="24" Height="220"/>
+        <!-- ===================== App identity card ===================== -->
+        <Border Style="{StaticResource Style.Card}" Padding="24" Margin="0,0,0,16">
+            <StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Border Width="48" Height="48" CornerRadius="14" Background="{StaticResource Brush.Accent}">
+                        <TextBlock Text="C" FontWeight="Bold" FontSize="20" Foreground="White"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <StackPanel Margin="14,0,0,0" VerticalAlignment="Center">
+                        <TextBlock Text="Cleanerer" FontFamily="{StaticResource Font.Default}"
+                                   FontWeight="Bold" FontSize="20"
+                                   Foreground="{StaticResource Brush.TextPrimary}"/>
+                        <TextBlock Text="v0.1.0" FontSize="12"
+                                   Foreground="{StaticResource Brush.TextMuted}" Margin="0,2,0,0"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <TextBlock Style="{StaticResource Style.Text.Body}" Margin="0,18,0,16">
+                    A free, open memory utility — live memory gauge, working-set trimming,
+                    standby-cache purge, process monitoring and automatic rules.
+                    All features free, forever.
+                </TextBlock>
+
+                <Border Style="{StaticResource Style.Pill.Success}" HorizontalAlignment="Left">
+                    <TextBlock Text="Free forever" FontSize="10" FontWeight="SemiBold"
+                               Foreground="{StaticResource Brush.Success}"/>
+                </Border>
+            </StackPanel>
+        </Border>
+
+        <!-- ===================== Honesty card ===================== -->
+        <Border Style="{StaticResource Style.Card}" Padding="24">
+            <StackPanel>
+                <TextBlock Text="What the buttons actually do" FontFamily="{StaticResource Font.Default}"
+                           FontSize="15" FontWeight="Bold"
+                           Foreground="{StaticResource Brush.TextPrimary}" Margin="0,0,0,4"/>
+                <TextBlock Text="No marketing spin — here's what actually happens on disk and in memory."
+                           Style="{StaticResource Style.Text.Body}" Margin="0,0,0,16"/>
+
+                <StackPanel Margin="0,0,0,12">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="&#x2713;" FontWeight="Bold" FontSize="13"
+                                   Foreground="{StaticResource Brush.Accent}" VerticalAlignment="Top" Margin="0,0,10,0"/>
+                        <TextBlock Grid.Column="1" Style="{StaticResource Style.Text.Body}" FontSize="12" TextWrapping="Wrap">
+                            <Run Text="Trimming working sets forces pages out of a process's working set — Windows just pages them back in on demand, so freed RAM is a soft, temporary gain."/>
+                        </TextBlock>
+                    </Grid>
+                </StackPanel>
+
+                <StackPanel Margin="0,0,0,12">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="&#x2713;" FontWeight="Bold" FontSize="13"
+                                   Foreground="{StaticResource Brush.Accent}" VerticalAlignment="Top" Margin="0,0,10,0"/>
+                        <TextBlock Grid.Column="1" Style="{StaticResource Style.Text.Body}" FontSize="12" TextWrapping="Wrap">
+                            <Run Text="Purging the standby list clears cached file data from RAM — Windows would evict that same cache automatically the moment something else needed the memory."/>
+                        </TextBlock>
+                    </Grid>
+                </StackPanel>
+
+                <StackPanel Margin="0,0,0,12">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="&#x2713;" FontWeight="Bold" FontSize="13"
+                                   Foreground="{StaticResource Brush.Accent}" VerticalAlignment="Top" Margin="0,0,10,0"/>
+                        <TextBlock Grid.Column="1" Style="{StaticResource Style.Text.Body}" FontSize="12" TextWrapping="Wrap">
+                            <Run Text="Automatic rules are checked every 30 seconds against a protected-process whitelist — core Windows processes can never be killed, even by a matching rule."/>
+                        </TextBlock>
+                    </Grid>
+                </StackPanel>
+
+                <StackPanel>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="&#x2713;" FontWeight="Bold" FontSize="13"
+                                   Foreground="{StaticResource Brush.Accent}" VerticalAlignment="Top" Margin="0,0,10,0"/>
+                        <TextBlock Grid.Column="1" Style="{StaticResource Style.Text.Body}" FontSize="12" TextWrapping="Wrap">
+                            <Run Text="Process monitoring just reads live memory counters per process — nothing is touched until you press Trim or Kill yourself."/>
+                        </TextBlock>
+                    </Grid>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <TextBlock Text="Built by Teddy · styled after GameTev"
+                   Style="{StaticResource Style.Text.Body}" FontSize="11" Margin="2,16,0,0"/>
     </StackPanel>
 </UserControl>
