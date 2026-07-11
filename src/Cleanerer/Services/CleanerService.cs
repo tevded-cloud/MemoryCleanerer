@@ -43,6 +43,27 @@ public class CleanerService
     }
 
     /// <summary>
+    /// Trims Cleanerer's OWN working set: a full GC pass first (so freed managed memory is
+    /// actually releasable), then <c>EmptyWorkingSet</c> on the current process. Pages the app
+    /// still needs fault straight back in, so this costs a brief hiccup at most. Called after
+    /// startup and whenever the window hides to the tray, keeping a "memory cleaner" from
+    /// hogging memory while idle. Never throws.
+    /// </summary>
+    public static void TrimSelf()
+    {
+        try
+        {
+            GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced, blocking: true, compacting: true);
+            GC.WaitForPendingFinalizers();
+            NativeMethods.EmptyWorkingSet(NativeMethods.GetCurrentProcess());
+        }
+        catch
+        {
+            // Best effort only.
+        }
+    }
+
+    /// <summary>
     /// Trims the working set of every accessible process, forcing pages back to the
     /// standby list. Individual failures (access denied, exited process) are counted as
     /// skipped and never throw. Trimming Cleanerer's own process is fine and intentional.

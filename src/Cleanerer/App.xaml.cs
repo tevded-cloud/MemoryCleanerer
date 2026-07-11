@@ -1,5 +1,7 @@
 using System.IO;
+using System.Threading;
 using System.Windows;
+using Cleanerer.Interop;
 using Cleanerer.Services;
 
 namespace Cleanerer;
@@ -7,10 +9,20 @@ namespace Cleanerer;
 /// <summary>
 /// Interaction logic for App.xaml. Starts the automatic-cleanup scheduler and the tray icon once
 /// at startup; the scheduler, settings service, and tray service are process-wide singletons
-/// shared with the view-models / main window.
+/// shared with the view-models / main window. Enforces a single instance per session: a second
+/// launch asks the first to show its window (even from the tray) and exits immediately.
 /// </summary>
 public partial class App : System.Windows.Application
 {
+    /// <summary>
+    /// Session-wide message id a second instance broadcasts before exiting; MainWindow's message
+    /// hook listens for it and restores the window. Registered once per process.
+    /// </summary>
+    internal static readonly int ShowExistingInstanceMessage =
+        NativeMethods.RegisterWindowMessage("Cleanerer.ShowExistingInstance");
+
+    // Held (not just created) for the app's whole lifetime; the OS releases it on exit.
+    private static Mutex? _singleInstanceMutex;
     /// <summary>Crash/error log beside settings.json — WPF swallows exceptions thrown inside
     /// binding-driven code paths, so without this a failing page constructor looks like "nothing
     /// happened". Never throws.</summary>
@@ -33,6 +45,16 @@ public partial class App : System.Windows.Application
 
     protected override void OnStartup(StartupEventArgs e)
     {
+        // Single instance per user session ("Local\" scope): if the mutex already exists, wake
+        // the running instance and bail out before any window or service spins up.
+        _singleInstanceMutex = new Mutex(initiallyOwned: true, @"Local\Cleanerer.SingleInstance", out bool isFirstInstance);
+        if (!isFirstInstance)
+        {
+            NativeMethods.PostMessage(NativeMethods.HWND_BROADCAST, ShowExistingInstanceMessage, IntPtr.Zero, IntPtr.Zero);
+            Shutdown();
+            return;
+        }
+
         base.OnStartup(e);
 
         DispatcherUnhandledException += (_, args) =>
@@ -63,6 +85,16 @@ public partial class App : System.Windows.Application
         {
             TrayService.Instance.Initialize(mainWindow);
         }
+
+        // Once startup settles, drop the working set: WPF/JIT startup leaves a lot of pages
+        // resident that are never touched again. One-shot timer, disposes itself.
+        var startupTrim = new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromSeconds(3) };
+        startupTrim.Tick += (_, _) =>
+        {
+            startupTrim.Stop();
+            CleanerService.TrimSelf();
+        };
+        startupTrim.Start();
     }
 
     protected override void OnExit(ExitEventArgs e)

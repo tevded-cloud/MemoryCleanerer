@@ -228,6 +228,25 @@ internal static class NativeMethods
         int cbAttribute);
 
     // ============================================================
+    // Single-instance support
+    // ============================================================
+
+    /// <summary>HWND_BROADCAST — PostMessage target that reaches every top-level window.</summary>
+    internal static readonly IntPtr HWND_BROADCAST = new(0xFFFF);
+
+    /// <summary>
+    /// Registers (or looks up) a system-wide message id for the given name. Both instances of
+    /// the app get the same id, which is how a second launch tells the first one to show its
+    /// window before exiting.
+    /// </summary>
+    [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+    internal static extern int RegisterWindowMessage([MarshalAs(UnmanagedType.LPWStr)] string lpString);
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    internal static extern bool PostMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+
+    // ============================================================
     // Borderless-window maximize support (WM_GETMINMAXINFO)
     // ============================================================
 

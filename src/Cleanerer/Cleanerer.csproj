@@ -44,8 +44,19 @@
     <PublishSingleFile>true</PublishSingleFile>
     <SelfContained>true</SelfContained>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
-    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+    <!--
+      Compression is deliberately OFF: compressed assemblies must be inflated into private,
+      unshareable memory at load, costing the running app 100+ MB of working set. Uncompressed
+      assemblies are memory-mapped straight from the exe (evictable, demand-paged). The exe on
+      disk is bigger, but the download zip barely changes since the zip does its own compression.
+    -->
+    <EnableCompressionInSingleFile>false</EnableCompressionInSingleFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Trades a little GC eagerness for a flatter heap; sensible for a background utility. -->
+    <RuntimeHostConfigurationOption Include="System.GC.ConserveMemory" Value="5" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />

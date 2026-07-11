@@ -42,15 +42,37 @@ public partial class MainWindow : Window
         }
     }
 
-    private static IntPtr WindowProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+    private IntPtr WindowProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
         const int WM_GETMINMAXINFO = 0x0024;
         if (msg == WM_GETMINMAXINFO)
         {
             NativeMethods.ClampMaximizedToWorkArea(hwnd, lParam);
         }
+        else if (msg == App.ShowExistingInstanceMessage)
+        {
+            // A second instance launched and exited; surface this one (even from the tray).
+            RestoreFromAnywhere();
+            handled = true;
+        }
 
         return IntPtr.Zero;
+    }
+
+    /// <summary>Shows and activates the window regardless of hidden/minimized state.</summary>
+    internal void RestoreFromAnywhere()
+    {
+        if (!IsVisible)
+        {
+            Show();
+        }
+
+        if (WindowState == WindowState.Minimized)
+        {
+            WindowState = WindowState.Normal;
+        }
+
+        Activate();
     }
 
     /// <summary>Corners are rounded when floating and square when maximized (flush to screen edges).</summary>
@@ -96,6 +118,9 @@ public partial class MainWindow : Window
             e.Cancel = true;
             Hide();
             TrayService.Instance.NotifyHiddenToTray();
+
+            // Idle in the tray is the app's long-lived state; shed as much memory as possible.
+            CleanerService.TrimSelf();
             return;
         }
 
