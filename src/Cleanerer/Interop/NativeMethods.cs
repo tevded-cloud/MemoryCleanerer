@@ -189,4 +189,18 @@ internal static class NativeMethods
         uint bufferLength,
         IntPtr previousState,
         IntPtr returnLength);
+
+    // ============================================================
+    // user32
+    // ============================================================
+
+    /// <summary>
+    /// Destroys a GDI icon handle. Required after <c>Bitmap.GetHicon()</c> /
+    /// <c>Icon.FromHandle</c>: neither of those managed APIs frees the underlying HICON, so the
+    /// raw handle must be destroyed explicitly to avoid leaking GDI objects (the tray icon is
+    /// rebuilt only once per process, but leaked handles are still worth avoiding).
+    /// </summary>
+    [DllImport("user32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    internal static extern bool DestroyIcon(IntPtr hIcon);
 }
