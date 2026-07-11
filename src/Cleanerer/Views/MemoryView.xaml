@@ -3,15 +3,176 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:Cleanerer.ViewModels"
              mc:Ignorable="d"
              d:DesignHeight="720" d:DesignWidth="840"
+             d:DataContext="{d:DesignInstance Type=vm:MemoryViewModel}"
              Background="{StaticResource Brush.Bg}">
-    <StackPanel Margin="32">
-        <TextBlock Text="SYSTEM STATUS" Style="{StaticResource Style.Text.Kicker}"/>
-        <TextBlock Text="Your memory" Style="{StaticResource Style.Text.PageTitle}" Margin="0,6,0,10"/>
-        <TextBlock Text="Live usage, session stats and one-click cleanup."
-                   Style="{StaticResource Style.Text.Body}" Margin="0,0,0,24"/>
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+    </UserControl.Resources>
 
-        <Border Style="{StaticResource Style.Card}" Padding="24" Height="220"/>
-    </StackPanel>
+    <Grid Margin="32">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- ===================== Header (from Unit 1) ===================== -->
+        <StackPanel Grid.Row="0">
+            <TextBlock Text="SYSTEM STATUS" Style="{StaticResource Style.Text.Kicker}"/>
+            <TextBlock Text="Your memory" Style="{StaticResource Style.Text.PageTitle}" Margin="0,6,0,10"/>
+            <TextBlock Text="Live usage, session stats and one-click cleanup."
+                       Style="{StaticResource Style.Text.Body}" Margin="0,0,0,24"/>
+        </StackPanel>
+
+        <!--
+            Two columns: Tasks on the left, Results on the right. Unit 3 adds the usage gauge
+            and session stats — those slot above the Tasks card (a new Auto row can be added
+            here, or the gauge card placed at the top of the left column).
+        -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- ===================== Tasks card ===================== -->
+            <Border Grid.Column="0"
+                    Style="{StaticResource Style.Card}"
+                    Padding="20"
+                    Margin="0,0,10,0"
+                    VerticalAlignment="Top">
+                <StackPanel>
+                    <TextBlock Text="Tasks" FontFamily="{StaticResource Font.Default}"
+                               FontSize="15" FontWeight="Bold"
+                               Foreground="{StaticResource Brush.TextPrimary}"
+                               Margin="0,0,0,4"/>
+                    <TextBlock Text="One-click cleanup actions."
+                               Style="{StaticResource Style.Text.Body}" Margin="0,0,0,16"/>
+
+                    <Button Style="{StaticResource Style.Button.GhostRow}"
+                            Command="{Binding TrimCommand}"
+                            IsEnabled="{Binding IsNotBusy}"
+                            Margin="0,0,0,10">
+                        <StackPanel>
+                            <TextBlock Text="Trim working sets" FontWeight="SemiBold" FontSize="13"
+                                       Foreground="{StaticResource Brush.TextPrimary}"/>
+                            <TextBlock Text="Force every process to release unused physical memory."
+                                       Style="{StaticResource Style.Text.Body}" FontSize="11" Margin="0,3,0,0"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button Style="{StaticResource Style.Button.GhostRow}"
+                            Command="{Binding ClearCacheCommand}"
+                            IsEnabled="{Binding IsNotBusy}"
+                            Margin="0,0,0,10">
+                        <StackPanel>
+                            <TextBlock Text="Clear system cache" FontWeight="SemiBold" FontSize="13"
+                                       Foreground="{StaticResource Brush.TextPrimary}"/>
+                            <TextBlock Text="Flush the file cache and purge standby memory. Needs admin."
+                                       Style="{StaticResource Style.Text.Body}" FontSize="11" Margin="0,3,0,0"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button Style="{StaticResource Style.Button.GhostRow}"
+                            Command="{Binding ClearClipboardCommand}"
+                            IsEnabled="{Binding IsNotBusy}"
+                            Margin="0,0,0,10">
+                        <StackPanel>
+                            <TextBlock Text="Clear clipboard" FontWeight="SemiBold" FontSize="13"
+                                       Foreground="{StaticResource Brush.TextPrimary}"/>
+                            <TextBlock Text="Wipe whatever is currently held on the clipboard."
+                                       Style="{StaticResource Style.Text.Body}" FontSize="11" Margin="0,3,0,0"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button Style="{StaticResource Style.Button.GhostRow}"
+                            Command="{Binding RestartExplorerCommand}"
+                            IsEnabled="{Binding IsNotBusy}">
+                        <StackPanel>
+                            <TextBlock Text="Restart Explorer" FontWeight="SemiBold" FontSize="13"
+                                       Foreground="{StaticResource Brush.TextPrimary}"/>
+                            <TextBlock Text="Restart the Windows shell to release leaked UI memory."
+                                       Style="{StaticResource Style.Text.Body}" FontSize="11" Margin="0,3,0,0"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Border>
+
+            <!-- ===================== Results card ===================== -->
+            <Border Grid.Column="1"
+                    Style="{StaticResource Style.Card}"
+                    Padding="20"
+                    Margin="10,0,0,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0" Margin="0,0,0,16">
+                        <TextBlock Text="Results" FontFamily="{StaticResource Font.Default}"
+                                   FontSize="15" FontWeight="Bold"
+                                   Foreground="{StaticResource Brush.TextPrimary}"/>
+                        <TextBlock Text="Newest first."
+                                   Style="{StaticResource Style.Text.Body}" Margin="0,4,0,0"/>
+                    </StackPanel>
+
+                    <!-- Empty state: dashed accent border -->
+                    <Grid Grid.Row="1"
+                          Visibility="{Binding IsEmpty, Converter={StaticResource BoolToVis}}"
+                          VerticalAlignment="Top" Margin="0,4,0,0">
+                        <Rectangle Stroke="{StaticResource Brush.Accent}" StrokeThickness="1"
+                                   StrokeDashArray="4 3" RadiusX="14" RadiusY="14" Opacity="0.55"/>
+                        <TextBlock Text="Run a task to see results here."
+                                   Style="{StaticResource Style.Text.Body}"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center" Margin="24"/>
+                    </Grid>
+
+                    <!-- Populated state: checklist rows -->
+                    <ScrollViewer Grid.Row="1"
+                                  VerticalScrollBarVisibility="Auto"
+                                  Visibility="{Binding HasResults, Converter={StaticResource BoolToVis}}">
+                        <ItemsControl ItemsSource="{Binding Results}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type vm:TaskResult}">
+                                    <Grid Margin="0,0,0,14">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Grid.Column="0" FontSize="14" FontWeight="Bold"
+                                                   VerticalAlignment="Top">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Text" Value="&#x2713;"/>
+                                                    <Setter Property="Foreground" Value="{StaticResource Brush.Success}"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Ok}" Value="False">
+                                                            <Setter Property="Text" Value="&#x2717;"/>
+                                                            <Setter Property="Foreground" Value="{StaticResource Brush.Danger}"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+
+                                        <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                                            <TextBlock Text="{Binding Title}" FontWeight="Bold" FontSize="13"
+                                                       Foreground="{StaticResource Brush.TextPrimary}"/>
+                                            <TextBlock Text="{Binding Detail}"
+                                                       Style="{StaticResource Style.Text.Body}"
+                                                       FontSize="12" Margin="0,2,0,0"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
 </UserControl>

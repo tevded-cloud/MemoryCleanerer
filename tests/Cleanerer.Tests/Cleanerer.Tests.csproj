@@ -1,7 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <!--
+      Targets net8.0-windows so the test project can reference the (WPF) Cleanerer
+      project directly. The tests themselves only exercise pure helpers and do not
+      touch any WPF/native types.
+    -->
+    <TargetFramework>net8.0-windows</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 
@@ -10,10 +15,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- Ensures the WPF shared framework resolves when loading the referenced assembly. -->
+    <FrameworkReference Include="Microsoft.WindowsDesktop.App" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
     <PackageReference Include="xunit" Version="2.5.3" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.5.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Cleanerer\Cleanerer.csproj" />
   </ItemGroup>
 
   <ItemGroup>
