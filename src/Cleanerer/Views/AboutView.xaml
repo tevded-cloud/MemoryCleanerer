@@ -6,6 +6,7 @@
              mc:Ignorable="d"
              d:DesignHeight="720" d:DesignWidth="840"
              Background="{StaticResource Brush.Bg}">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
     <StackPanel Margin="32">
         <TextBlock Text="SHIP" Style="{StaticResource Style.Text.Kicker}"/>
         <TextBlock Text="About" Style="{StaticResource Style.Text.PageTitle}" Margin="0,6,0,10"/>
@@ -109,7 +110,34 @@
             </StackPanel>
         </Border>
 
-        <TextBlock Text="Built by Teddy · styled after GameTev"
+        <!-- ===================== Private by design card ===================== -->
+        <Border Style="{StaticResource Style.Card}" Padding="24" Margin="0,16,0,0">
+            <StackPanel>
+                <TextBlock Text="Private by design" FontFamily="{StaticResource Font.Default}"
+                           FontSize="15" FontWeight="Bold"
+                           Foreground="{StaticResource Brush.TextPrimary}" Margin="0,0,0,4"/>
+                <TextBlock Text="No accounts, no cloud, no phoning home."
+                           Style="{StaticResource Style.Text.Body}" Margin="0,0,0,16"/>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="&#x2713;" FontWeight="Bold" FontSize="13"
+                               Foreground="{StaticResource Brush.Accent}" VerticalAlignment="Top" Margin="0,0,10,0"/>
+                    <TextBlock Grid.Column="1" Style="{StaticResource Style.Text.Body}" FontSize="12" TextWrapping="Wrap">
+                        <Run Text="100% private to your system" FontWeight="Bold"
+                             Foreground="{StaticResource Brush.TextPrimary}"/>
+                        <LineBreak/>
+                        <Run Text="Cleanerer runs entirely on your PC. It makes no network connections, sends no telemetry, and collects nothing — the only things it touches are your RAM, your settings file, and the Windows APIs it names above."/>
+                    </TextBlock>
+                </Grid>
+            </StackPanel>
+        </Border>
+
+        <TextBlock Text="Made by TevDed · styled after GameTev"
                    Style="{StaticResource Style.Text.Body}" FontSize="11" Margin="2,16,0,0"/>
     </StackPanel>
+    </ScrollViewer>
 </UserControl>

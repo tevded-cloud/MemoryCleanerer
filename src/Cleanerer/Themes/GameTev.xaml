@@ -20,6 +20,9 @@
     <Color x:Key="Color.Danger">#E05252</Color>
     <Color x:Key="Color.Warn">#E8C34A</Color>
 
+    <!-- Lightened CardBorder used for the scrollbar thumb's hover state. -->
+    <Color x:Key="Color.ScrollThumbHover">#3A4356</Color>
+
     <!-- ==================== Brushes ==================== -->
     <SolidColorBrush x:Key="Brush.Bg" Color="{StaticResource Color.Bg}"/>
     <SolidColorBrush x:Key="Brush.Sidebar" Color="{StaticResource Color.Sidebar}"/>
@@ -41,6 +44,8 @@
 
     <SolidColorBrush x:Key="Brush.SuccessDim" Color="{StaticResource Color.Success}" Opacity="0.15"/>
     <SolidColorBrush x:Key="Brush.DangerDim" Color="{StaticResource Color.Danger}" Opacity="0.15"/>
+
+    <SolidColorBrush x:Key="Brush.ScrollThumbHover" Color="{StaticResource Color.ScrollThumbHover}"/>
 
     <!-- ==================== Corner radii ==================== -->
     <CornerRadius x:Key="Radius.Card">14</CornerRadius>
@@ -722,6 +727,97 @@
         <Setter Property="ColumnHeaderStyle" Value="{StaticResource Style.DataGridColumnHeader}"/>
         <Setter Property="RowStyle" Value="{StaticResource Style.DataGridRow}"/>
         <Setter Property="CellStyle" Value="{StaticResource Style.DataGridCell}"/>
+    </Style>
+
+    <!-- ==================== ScrollBar (implicit, app-wide) ====================
+         Slim modern scrollbar with no arrow buttons and a transparent track: applies
+         automatically to every ScrollViewer/DataGrid in the app since it targets
+         ScrollBar with no x:Key. The two invisible RepeatButtons in the track still
+         page on click; only the thumb is drawn. -->
+    <Style x:Key="Style.ScrollBar.PageButton" TargetType="RepeatButton">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="IsTabStop" Value="False"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RepeatButton">
+                    <Border Background="Transparent"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="Style.ScrollBar.Thumb" TargetType="Thumb">
+        <Setter Property="Background" Value="{StaticResource Brush.CardBorder}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Thumb">
+                    <Border x:Name="ThumbBd"
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="5"/>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="ThumbBd" Property="Background" Value="{StaticResource Brush.ScrollThumbHover}"/>
+                        </Trigger>
+                        <Trigger Property="IsDragging" Value="True">
+                            <Setter TargetName="ThumbBd" Property="Background" Value="{StaticResource Brush.Accent}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="ScrollBar">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Width" Value="10"/>
+        <Setter Property="MinWidth" Value="10"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ScrollBar">
+                    <Grid Background="{TemplateBinding Background}">
+                        <Track x:Name="PART_Track" IsDirectionReversed="True" Focusable="False">
+                            <Track.DecreaseRepeatButton>
+                                <RepeatButton Style="{StaticResource Style.ScrollBar.PageButton}" Command="ScrollBar.PageUpCommand"/>
+                            </Track.DecreaseRepeatButton>
+                            <Track.IncreaseRepeatButton>
+                                <RepeatButton Style="{StaticResource Style.ScrollBar.PageButton}" Command="ScrollBar.PageDownCommand"/>
+                            </Track.IncreaseRepeatButton>
+                            <Track.Thumb>
+                                <Thumb Style="{StaticResource Style.ScrollBar.Thumb}" Width="10" MinHeight="24"/>
+                            </Track.Thumb>
+                        </Track>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="Orientation" Value="Horizontal">
+                <Setter Property="Width" Value="Auto"/>
+                <Setter Property="Height" Value="10"/>
+                <Setter Property="MinWidth" Value="0"/>
+                <Setter Property="MinHeight" Value="10"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ScrollBar">
+                            <Grid Background="{TemplateBinding Background}">
+                                <Track x:Name="PART_Track" IsDirectionReversed="False" Focusable="False">
+                                    <Track.DecreaseRepeatButton>
+                                        <RepeatButton Style="{StaticResource Style.ScrollBar.PageButton}" Command="ScrollBar.PageLeftCommand"/>
+                                    </Track.DecreaseRepeatButton>
+                                    <Track.IncreaseRepeatButton>
+                                        <RepeatButton Style="{StaticResource Style.ScrollBar.PageButton}" Command="ScrollBar.PageRightCommand"/>
+                                    </Track.IncreaseRepeatButton>
+                                    <Track.Thumb>
+                                        <Thumb Style="{StaticResource Style.ScrollBar.Thumb}" Height="10" MinWidth="24"/>
+                                    </Track.Thumb>
+                                </Track>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Trigger>
+        </Style.Triggers>
     </Style>
 
 </ResourceDictionary>
