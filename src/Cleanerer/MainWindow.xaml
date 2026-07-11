@@ -7,7 +7,7 @@
         xmlns:vm="clr-namespace:Cleanerer.ViewModels"
         xmlns:local="clr-namespace:Cleanerer"
         mc:Ignorable="d"
-        Title="Cleanerer"
+        Title="Memory Cleanerer"
         Width="825" Height="540"
         MinWidth="780" MinHeight="520"
         WindowStyle="None"
@@ -125,7 +125,7 @@
                         <ImageBrush ImageSource="pack://application:,,,/Assets/app-logo.png" Stretch="UniformToFill"/>
                     </Border.Background>
                 </Border>
-                <TextBlock Text="Cleanerer" FontWeight="SemiBold" FontSize="13"
+                <TextBlock Text="Memory Cleanerer" FontWeight="SemiBold" FontSize="13"
                            Foreground="{StaticResource Brush.TextPrimary}"
                            Margin="8,0,0,0" VerticalAlignment="Center"/>
                 <Border Style="{StaticResource Style.Badge.Success}" Margin="10,0,0,0" VerticalAlignment="Center">

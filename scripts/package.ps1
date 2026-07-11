@@ -21,25 +21,25 @@ $stage = Join-Path $env:TEMP "cleanerer-package"
 if (Test-Path $stage) { Remove-Item $stage -Recurse -Force }
 New-Item -ItemType Directory -Path $stage | Out-Null
 
-Copy-Item (Join-Path $publish "Cleanerer.exe") $stage
+Copy-Item (Join-Path $publish "MemoryCleanerer.exe") $stage
 
 # Short user-facing readme inside the zip (not the repo README).
 @"
-Cleanerer v$version
+Memory Cleanerer v$version
 ===================
 
 A free Windows memory utility by TevDed.
 Live memory gauge - working-set trimming - standby-cache purge -
 process monitoring and automatic rules. All features free, forever.
 
-Requirements: Windows 10/11, 64-bit. No install needed - just run Cleanerer.exe.
+Requirements: Windows 10/11, 64-bit. No install needed - just run MemoryCleanerer.exe.
 It asks for administrator rights because purging the standby cache requires them.
 
 100% private to your system: no network connections, no telemetry, nothing collected.
 "@ | Out-File (Join-Path $stage "README.txt") -Encoding utf8
 
 New-Item -ItemType Directory -Path $dist -Force | Out-Null
-$zipName = "Cleanerer-v$version-win-x64.zip"
+$zipName = "MemoryCleanerer-v$version-win-x64.zip"
 $zipPath = Join-Path $dist $zipName
 if (Test-Path $zipPath) { Remove-Item $zipPath -Force }
 Compress-Archive -Path (Join-Path $stage "*") -DestinationPath $zipPath

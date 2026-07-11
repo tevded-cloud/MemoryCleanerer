@@ -11,19 +11,19 @@ public class TrayServiceTests
     [Fact]
     public void TypicalLoad_FormatsWithPercentSign()
     {
-        Assert.Equal("Cleanerer: memory 47%", TrayService.TooltipText(47));
+        Assert.Equal("Memory Cleanerer: memory 47%", TrayService.TooltipText(47));
     }
 
     [Fact]
     public void ZeroLoad_FormatsAsZeroPercent()
     {
-        Assert.Equal("Cleanerer: memory 0%", TrayService.TooltipText(0));
+        Assert.Equal("Memory Cleanerer: memory 0%", TrayService.TooltipText(0));
     }
 
     [Fact]
     public void FullLoad_FormatsAsOneHundredPercent()
     {
-        Assert.Equal("Cleanerer: memory 100%", TrayService.TooltipText(100));
+        Assert.Equal("Memory Cleanerer: memory 100%", TrayService.TooltipText(100));
     }
 
     [Fact]

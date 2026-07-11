@@ -19,7 +19,7 @@
                 <TextBlock Text="Automatic rules" FontFamily="{StaticResource Font.Default}"
                            FontSize="15" FontWeight="Bold"
                            Foreground="{StaticResource Brush.TextPrimary}"/>
-                <TextBlock Text="Cleanerer trims or kills matching processes automatically. Core Windows processes are always protected. A Kill rule aimed at one is blocked."
+                <TextBlock Text="Memory Cleanerer trims or kills matching processes automatically. Core Windows processes are always protected. A Kill rule aimed at one is blocked."
                            Style="{StaticResource Style.Text.Body}" FontSize="12" Margin="0,4,0,12"/>
 
                 <ScrollViewer MaxHeight="200" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">

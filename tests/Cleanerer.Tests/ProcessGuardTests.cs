@@ -38,6 +38,7 @@ public class ProcessGuardTests
     [InlineData("vmmem")]
     [InlineData("wudfhost")]
     [InlineData("cleanerer")]
+    [InlineData("memorycleanerer")]
     public void IsProtected_True_ForEveryProtectedName(string name)
     {
         Assert.True(ProcessGuard.IsProtected(name, NormalPid, OwnPid));

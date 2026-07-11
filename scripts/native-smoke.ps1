@@ -39,7 +39,7 @@ Write-Host ("Available physical memory now: {0:N0} MB" -f $availMB) -ForegroundC
 Write-Host ""
 Write-Host "To exercise the real cleanup paths, build and run the app elevated:" -ForegroundColor Cyan
 Write-Host "    dotnet build Cleanerer.sln"
-Write-Host "    Start-Process .\src\Cleanerer\bin\Debug\net8.0-windows\Cleanerer.exe -Verb RunAs"
+Write-Host "    Start-Process .\src\Cleanerer\bin\Debug\net8.0-windows\MemoryCleanerer.exe -Verb RunAs"
 Write-Host ""
 Write-Host "Then, on the Memory page, click a task and watch the Results list:"
 Write-Host "  * Trim working sets  -> 'Trimmed N processes (M skipped)', usually frees some MB."

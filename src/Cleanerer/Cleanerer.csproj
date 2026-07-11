@@ -8,8 +8,11 @@
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <AssemblyName>Cleanerer</AssemblyName>
-    <Product>Cleanerer</Product>
+    <!-- Rebrand: the product/exe is "Memory Cleanerer"; code namespaces stay "Cleanerer". -->
+    <AssemblyName>MemoryCleanerer</AssemblyName>
+    <RootNamespace>Cleanerer</RootNamespace>
+    <Product>Memory Cleanerer</Product>
+    <AssemblyTitle>Memory Cleanerer</AssemblyTitle>
     <Version>0.1.0</Version>
     <AssemblyVersion>0.1.0.0</AssemblyVersion>
     <FileVersion>0.1.0.0</FileVersion>

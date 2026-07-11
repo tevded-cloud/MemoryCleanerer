@@ -33,7 +33,8 @@ public static class ProcessGuard
         // Audio, virtualization, user-mode driver host.
         "audiodg", "vmmem", "wudfhost",
         // Belt-and-braces: never let a rule turn the app on itself (ownPid also covers this).
-        "cleanerer",
+        // Both names covered: pre-rebrand exe and the current "Memory Cleanerer" one.
+        "cleanerer", "memorycleanerer",
     };
 
     /// <summary>

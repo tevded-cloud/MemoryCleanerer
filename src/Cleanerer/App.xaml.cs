@@ -61,8 +61,8 @@ public partial class App : System.Windows.Application
         {
             LogError("DispatcherUnhandledException", args.Exception);
             System.Windows.MessageBox.Show(
-                $"Cleanerer hit an unexpected error:\n\n{args.Exception.Message}\n\nDetails were written to %AppData%\\Cleanerer\\error.log.",
-                "Cleanerer", MessageBoxButton.OK, MessageBoxImage.Warning);
+                $"Memory Cleanerer hit an unexpected error:\n\n{args.Exception.Message}\n\nDetails were written to %AppData%\\Cleanerer\\error.log.",
+                "Memory Cleanerer", MessageBoxButton.OK, MessageBoxImage.Warning);
             args.Handled = true;
         };
 

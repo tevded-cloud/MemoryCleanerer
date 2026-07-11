@@ -13,7 +13,7 @@
         <StackPanel Margin="12,8,12,12">
             <!-- ===================== Header ===================== -->
             <TextBlock Text="Options" Style="{StaticResource Style.Text.PageTitle}" Margin="0,0,0,4"/>
-            <TextBlock Text="Timers, thresholds and startup behavior for Cleanerer."
+            <TextBlock Text="Timers, thresholds and startup behavior for Memory Cleanerer."
                        Style="{StaticResource Style.Text.Body}" Margin="0,0,0,10"/>
 
             <!-- ===================== Startup card ===================== -->
@@ -22,7 +22,7 @@
                     <TextBlock Text="Startup" FontFamily="{StaticResource Font.Default}"
                                FontSize="15" FontWeight="Bold"
                                Foreground="{StaticResource Brush.TextPrimary}" Margin="0,0,0,4"/>
-                    <TextBlock Text="How Cleanerer launches and lives in the background."
+                    <TextBlock Text="How Memory Cleanerer launches and lives in the background."
                                Style="{StaticResource Style.Text.Body}" Margin="0,0,0,18"/>
 
                     <!-- Start with Windows -->
@@ -32,7 +32,7 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0" Margin="0,0,16,0">
-                            <TextBlock Text="Start Cleanerer with Windows" FontWeight="SemiBold" FontSize="13"
+                            <TextBlock Text="Start Memory Cleanerer with Windows" FontWeight="SemiBold" FontSize="13"
                                        Foreground="{StaticResource Brush.TextPrimary}"/>
                             <TextBlock Text="Launch automatically when you sign in."
                                        Style="{StaticResource Style.Text.Body}" FontSize="12" Margin="0,3,0,0"/>

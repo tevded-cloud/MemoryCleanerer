@@ -18,7 +18,10 @@ namespace Cleanerer.Services;
 public class AutostartService
 {
     private const string RunKeyPath = @"Software\Microsoft\Windows\CurrentVersion\Run";
-    private const string ValueName = "Cleanerer";
+    private const string ValueName = "Memory Cleanerer";
+
+    /// <summary>Pre-rebrand entry name; removed whenever the entry is reconciled.</summary>
+    private const string LegacyValueName = "Cleanerer";
 
     /// <summary>True if the Run entry exists and points at the current executable.</summary>
     public bool IsEnabled()
@@ -44,6 +47,9 @@ public class AutostartService
         try
         {
             using RegistryKey key = Registry.CurrentUser.CreateSubKey(RunKeyPath, writable: true);
+
+            // Rebrand migration: drop the old "Cleanerer" value so the app can't double-start.
+            key.DeleteValue(LegacyValueName, throwOnMissingValue: false);
 
             if (enabled)
             {

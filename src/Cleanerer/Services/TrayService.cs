@@ -67,7 +67,7 @@ public sealed class TrayService : IDisposable
         _notifyIcon = new System.Windows.Forms.NotifyIcon
         {
             Icon = _icon,
-            Text = "Cleanerer",
+            Text = "Memory Cleanerer",
             Visible = true,
             ContextMenuStrip = menu,
         };
@@ -104,7 +104,7 @@ public sealed class TrayService : IDisposable
         }
 
         _hasShownFirstHideBalloon = true;
-        ShowBalloon("Cleanerer", "Cleanerer is still running here", System.Windows.Forms.ToolTipIcon.Info);
+        ShowBalloon("Memory Cleanerer", "Memory Cleanerer is still running here", System.Windows.Forms.ToolTipIcon.Info);
     }
 
     private void RefreshTooltip()
@@ -125,7 +125,7 @@ public sealed class TrayService : IDisposable
     /// </summary>
     public static string TooltipText(int loadPercent)
     {
-        string text = $"Cleanerer: memory {loadPercent}%";
+        string text = $"Memory Cleanerer: memory {loadPercent}%";
         return text.Length <= 63 ? text : text.Substring(0, 63);
     }
 

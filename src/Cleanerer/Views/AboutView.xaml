@@ -22,7 +22,7 @@
                         </Border.Background>
                     </Border>
                     <StackPanel Margin="14,0,0,0" VerticalAlignment="Center">
-                        <TextBlock Text="Cleanerer" FontFamily="{StaticResource Font.Default}"
+                        <TextBlock Text="Memory Cleanerer" FontFamily="{StaticResource Font.Default}"
                                    FontWeight="Bold" FontSize="20"
                                    Foreground="{StaticResource Brush.TextPrimary}"/>
                         <TextBlock Text="v0.1.0" FontSize="12"
@@ -130,7 +130,7 @@
                         <Run Text="100% private to your system" FontWeight="Bold"
                              Foreground="{StaticResource Brush.TextPrimary}"/>
                         <LineBreak/>
-                        <Run Text="Cleanerer runs entirely on your PC. It makes no network connections, sends no telemetry, and collects nothing. The only things it touches are your RAM, your settings file, and the Windows APIs it names above."/>
+                        <Run Text="Memory Cleanerer runs entirely on your PC. It makes no network connections, sends no telemetry, and collects nothing. The only things it touches are your RAM, your settings file, and the Windows APIs it names above."/>
                     </TextBlock>
                 </Grid>
             </StackPanel>
