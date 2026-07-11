@@ -10,8 +10,9 @@
         Title="Cleanerer"
         Width="825" Height="540"
         MinWidth="780" MinHeight="520"
-        WindowStyle="SingleBorderWindow"
-        Background="{StaticResource Brush.Bg}"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
         FontFamily="{StaticResource Font.Default}"
         d:DataContext="{d:DesignInstance Type=vm:MainViewModel}">
 
@@ -19,8 +20,13 @@
         <vm:MainViewModel/>
     </Window.DataContext>
 
+    <!-- WindowStyle=None + AllowsTransparency lets the root Border below draw real 14px rounded
+         corners (matching Radius.Card) — DWM's built-in rounding maxes out around 8px. The
+         trade-offs are handled in code-behind: WM_GETMINMAXINFO caps the maximized size to the
+         work area (borderless windows otherwise cover the taskbar), and corners square off
+         while maximized. -->
     <shell:WindowChrome.WindowChrome>
-        <shell:WindowChrome CaptionHeight="40"
+        <shell:WindowChrome CaptionHeight="36"
                              ResizeBorderThickness="6"
                              GlassFrameThickness="0"
                              CornerRadius="0"
@@ -97,14 +103,16 @@
 
     </Window.Resources>
 
+    <Border x:Name="WindowRoot" Background="{StaticResource Brush.Bg}" CornerRadius="14">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="40"/>
+            <RowDefinition Height="36"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <!-- ===================== Title bar: branding + all navigation ===================== -->
-        <Grid Grid.Row="0" Background="{StaticResource Brush.Sidebar}">
+        <Border x:Name="TitleBarRoot" Grid.Row="0" Background="{StaticResource Brush.Sidebar}" CornerRadius="13,13,0,0">
+        <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
@@ -146,8 +154,10 @@
                         Click="CloseButton_Click"/>
             </StackPanel>
         </Grid>
+        </Border>
 
         <!-- ===================== Content ===================== -->
         <ContentControl Grid.Row="1" Content="{Binding CurrentPage}"/>
     </Grid>
+    </Border>
 </Window>

@@ -231,10 +231,10 @@
     </Style>
 
     <!-- Ghost variant used for the window caption buttons (minimize/maximize); close uses Style.Button.CaptionClose.
-         Width is the fixed hit-target; Height fills the 40px title bar exactly. -->
+         Width is the fixed hit-target; Height fills the 36px title bar exactly. -->
     <Style x:Key="Style.Button.Caption" TargetType="Button">
         <Setter Property="Width" Value="40"/>
-        <Setter Property="Height" Value="40"/>
+        <Setter Property="Height" Value="36"/>
         <Setter Property="Foreground" Value="{StaticResource Brush.TextMuted}"/>
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="BorderThickness" Value="0"/>

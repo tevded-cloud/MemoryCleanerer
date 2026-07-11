@@ -23,34 +23,44 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
-        StateChanged += (_, _) => UpdateMaximizeRestoreGlyph();
-        UpdateMaximizeRestoreGlyph();
+        StateChanged += (_, _) => OnWindowStateChanged();
+        OnWindowStateChanged();
     }
 
     /// <summary>
-    /// Windows 11 rounds standard windows automatically, but a custom-chrome (WindowChrome)
-    /// window like this one renders square corners unless explicitly told otherwise via DWM.
-    /// Older Windows 10 doesn't know this attribute at all, so failures are swallowed silently —
-    /// the app must still run there, just without rounded corners.
+    /// The window is borderless (WindowStyle=None + AllowsTransparency) so the root Border can
+    /// draw true 14px rounded corners. Borderless windows have one nasty default: maximizing
+    /// covers the taskbar. WM_GETMINMAXINFO caps the maximized size to the monitor's work area.
     /// </summary>
     protected override void OnSourceInitialized(EventArgs e)
     {
         base.OnSourceInitialized(e);
 
-        try
+        if (PresentationSource.FromVisual(this) is HwndSource source)
         {
-            var hwnd = new WindowInteropHelper(this).Handle;
-            var preference = NativeMethods.DWMWCP_ROUND;
-            NativeMethods.DwmSetWindowAttribute(
-                hwnd,
-                NativeMethods.DWMWA_WINDOW_CORNER_PREFERENCE,
-                ref preference,
-                sizeof(int));
+            source.AddHook(WindowProc);
         }
-        catch
+    }
+
+    private static IntPtr WindowProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+    {
+        const int WM_GETMINMAXINFO = 0x0024;
+        if (msg == WM_GETMINMAXINFO)
         {
-            // Attribute unsupported (pre-Windows 11) or dwmapi unavailable — not fatal.
+            NativeMethods.ClampMaximizedToWorkArea(hwnd, lParam);
         }
+
+        return IntPtr.Zero;
+    }
+
+    /// <summary>Corners are rounded when floating and square when maximized (flush to screen edges).</summary>
+    private void OnWindowStateChanged()
+    {
+        UpdateMaximizeRestoreGlyph();
+
+        bool maximized = WindowState == WindowState.Maximized;
+        WindowRoot.CornerRadius = maximized ? new CornerRadius(0) : new CornerRadius(14);
+        TitleBarRoot.CornerRadius = maximized ? new CornerRadius(0) : new CornerRadius(13, 13, 0, 0);
     }
 
     private void MinimizeButton_Click(object sender, RoutedEventArgs e)

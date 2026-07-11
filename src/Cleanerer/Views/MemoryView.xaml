@@ -14,7 +14,7 @@
         <conv:GaugeLevelToBrushConverter x:Key="GaugeLevelToBrushConverter"/>
     </UserControl.Resources>
 
-    <Grid Margin="20,16,20,20">
+    <Grid Margin="12,8,12,12">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -24,9 +24,9 @@
         <!-- ===================== Header (from Unit 1) ===================== -->
         <StackPanel Grid.Row="0">
             <TextBlock Text="SYSTEM STATUS" Style="{StaticResource Style.Text.Kicker}"/>
-            <TextBlock Text="Your memory" Style="{StaticResource Style.Text.PageTitle}" Margin="0,4,0,6"/>
+            <TextBlock Text="Your memory" Style="{StaticResource Style.Text.PageTitle}" Margin="0,2,0,4"/>
             <TextBlock Text="Live usage, session stats and one-click cleanup."
-                       Style="{StaticResource Style.Text.Body}" Margin="0,0,0,14"/>
+                       Style="{StaticResource Style.Text.Body}" Margin="0,0,0,10"/>
         </StackPanel>
 
         <!-- ===================== Usage gauge card ===================== -->

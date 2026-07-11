@@ -7,11 +7,11 @@
              d:DesignHeight="720" d:DesignWidth="840"
              Background="{StaticResource Brush.Bg}">
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-    <StackPanel Margin="20,16,20,20">
+    <StackPanel Margin="12,8,12,12">
         <TextBlock Text="SHIP" Style="{StaticResource Style.Text.Kicker}"/>
-        <TextBlock Text="About" Style="{StaticResource Style.Text.PageTitle}" Margin="0,4,0,6"/>
+        <TextBlock Text="About" Style="{StaticResource Style.Text.PageTitle}" Margin="0,2,0,4"/>
         <TextBlock Text="Version, credits, and an honest account of what this app does."
-                   Style="{StaticResource Style.Text.Body}" Margin="0,0,0,14"/>
+                   Style="{StaticResource Style.Text.Body}" Margin="0,0,0,10"/>
 
         <!-- ===================== App identity card ===================== -->
         <Border Style="{StaticResource Style.Card}" Padding="24" Margin="0,0,0,16">

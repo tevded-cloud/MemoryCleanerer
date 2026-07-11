@@ -4,17 +4,18 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Cleanerer.ViewModels"
+             xmlns:views="clr-namespace:Cleanerer.Views"
              mc:Ignorable="d"
              d:DesignHeight="820" d:DesignWidth="840"
              d:DataContext="{d:DesignInstance Type=vm:OptionsViewModel}"
              Background="{StaticResource Brush.Bg}">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel Margin="20,16,20,20">
+        <StackPanel Margin="12,8,12,12">
             <!-- ===================== Header ===================== -->
             <TextBlock Text="CONTROL" Style="{StaticResource Style.Text.Kicker}"/>
-            <TextBlock Text="Options" Style="{StaticResource Style.Text.PageTitle}" Margin="0,4,0,6"/>
+            <TextBlock Text="Options" Style="{StaticResource Style.Text.PageTitle}" Margin="0,2,0,4"/>
             <TextBlock Text="Timers, thresholds and startup behavior for Cleanerer."
-                       Style="{StaticResource Style.Text.Body}" Margin="0,0,0,14"/>
+                       Style="{StaticResource Style.Text.Body}" Margin="0,0,0,10"/>
 
             <!-- ===================== Startup card ===================== -->
             <Border Style="{StaticResource Style.Card}" Padding="24" Margin="0,0,0,16">
@@ -60,7 +61,7 @@
             </Border>
 
             <!-- ===================== Automatic cleanup card ===================== -->
-            <Border Style="{StaticResource Style.Card}" Padding="24">
+            <Border Style="{StaticResource Style.Card}" Padding="24" Margin="0,0,0,16">
                 <StackPanel>
                     <TextBlock Text="Automatic cleanup" FontFamily="{StaticResource Font.Default}"
                                FontSize="15" FontWeight="Bold"
@@ -169,6 +170,9 @@
                     </Grid>
                 </StackPanel>
             </Border>
+
+            <!-- ===================== Automatic rules ===================== -->
+            <views:RulesPanel Margin="0,0,0,0"/>
 
             <TextBlock Text="Changes save instantly. Auto-actions apply a 5-minute cooldown so a busy machine is not cleaned every tick. Start-with-Windows writes a per-user registry entry."
                        Style="{StaticResource Style.Text.Body}" FontSize="11" Margin="2,16,0,0"/>

@@ -226,4 +226,84 @@ internal static class NativeMethods
         int dwAttribute,
         ref int pvAttribute,
         int cbAttribute);
+
+    // ============================================================
+    // Borderless-window maximize support (WM_GETMINMAXINFO)
+    // ============================================================
+
+    [StructLayout(LayoutKind.Sequential)]
+    internal struct POINT
+    {
+        public int X;
+        public int Y;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    internal struct RECT
+    {
+        public int Left;
+        public int Top;
+        public int Right;
+        public int Bottom;
+    }
+
+    /// <summary>MINMAXINFO — filled in by the WM_GETMINMAXINFO handler.</summary>
+    [StructLayout(LayoutKind.Sequential)]
+    internal struct MINMAXINFO
+    {
+        public POINT ptReserved;
+        public POINT ptMaxSize;
+        public POINT ptMaxPosition;
+        public POINT ptMinTrackSize;
+        public POINT ptMaxTrackSize;
+    }
+
+    /// <summary>MONITORINFO — rcWork is the monitor's area excluding the taskbar.</summary>
+    [StructLayout(LayoutKind.Sequential)]
+    internal struct MONITORINFO
+    {
+        public uint cbSize;
+        public RECT rcMonitor;
+        public RECT rcWork;
+        public uint dwFlags;
+    }
+
+    internal const uint MONITOR_DEFAULTTONEAREST = 2;
+
+    [DllImport("user32.dll")]
+    internal static extern IntPtr MonitorFromWindow(IntPtr hwnd, uint dwFlags);
+
+    [DllImport("user32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    internal static extern bool GetMonitorInfo(IntPtr hMonitor, ref MONITORINFO lpmi);
+
+    /// <summary>
+    /// WM_GETMINMAXINFO handler body for a borderless (WindowStyle=None) window: rewrites the
+    /// message's MINMAXINFO so "maximized" means the monitor's WORK area (taskbar excluded)
+    /// instead of the full screen. Without this a borderless window maximizes over the taskbar.
+    /// </summary>
+    internal static void ClampMaximizedToWorkArea(IntPtr hwnd, IntPtr lParam)
+    {
+        IntPtr monitor = MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST);
+        if (monitor == IntPtr.Zero)
+        {
+            return;
+        }
+
+        var info = new MONITORINFO { cbSize = (uint)Marshal.SizeOf<MONITORINFO>() };
+        if (!GetMonitorInfo(monitor, ref info))
+        {
+            return;
+        }
+
+        var mmi = Marshal.PtrToStructure<MINMAXINFO>(lParam);
+
+        // Positions are relative to the monitor origin, not the virtual desktop.
+        mmi.ptMaxPosition.X = info.rcWork.Left - info.rcMonitor.Left;
+        mmi.ptMaxPosition.Y = info.rcWork.Top - info.rcMonitor.Top;
+        mmi.ptMaxSize.X = info.rcWork.Right - info.rcWork.Left;
+        mmi.ptMaxSize.Y = info.rcWork.Bottom - info.rcWork.Top;
+
+        Marshal.StructureToPtr(mmi, lParam, fDeleteOld: false);
+    }
 }
