@@ -25,9 +25,9 @@
         <!-- ===================== Header ===================== -->
         <StackPanel Grid.Row="0">
             <TextBlock Text="PRO — FREE HERE" Style="{StaticResource Style.Text.Kicker}"/>
-            <TextBlock Text="Processes" Style="{StaticResource Style.Text.PageTitle}" Margin="0,6,0,10"/>
+            <TextBlock Text="Processes" Style="{StaticResource Style.Text.PageTitle}" Margin="0,4,0,6"/>
             <TextBlock Text="Monitor what's running, trim memory hogs, and let Cleanerer auto-manage the noisy ones."
-                       Style="{StaticResource Style.Text.Body}" Margin="0,0,0,24"/>
+                       Style="{StaticResource Style.Text.Body}" Margin="0,0,0,14"/>
         </StackPanel>
 
         <!-- ===================== Toolbar: search + aggregate line ===================== -->

@@ -58,7 +58,7 @@
     <!-- ==================== Text styles ==================== -->
     <Style x:Key="Style.Text.PageTitle" TargetType="TextBlock">
         <Setter Property="FontFamily" Value="{StaticResource Font.Default}"/>
-        <Setter Property="FontSize" Value="28"/>
+        <Setter Property="FontSize" Value="22"/>
         <Setter Property="FontWeight" Value="Bold"/>
         <Setter Property="Foreground" Value="{StaticResource Brush.TextPrimary}"/>
     </Style>

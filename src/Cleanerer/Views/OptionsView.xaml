@@ -12,9 +12,9 @@
         <StackPanel Margin="20,16,20,20">
             <!-- ===================== Header ===================== -->
             <TextBlock Text="CONTROL" Style="{StaticResource Style.Text.Kicker}"/>
-            <TextBlock Text="Options" Style="{StaticResource Style.Text.PageTitle}" Margin="0,6,0,10"/>
+            <TextBlock Text="Options" Style="{StaticResource Style.Text.PageTitle}" Margin="0,4,0,6"/>
             <TextBlock Text="Timers, thresholds and startup behavior for Cleanerer."
-                       Style="{StaticResource Style.Text.Body}" Margin="0,0,0,24"/>
+                       Style="{StaticResource Style.Text.Body}" Margin="0,0,0,14"/>
 
             <!-- ===================== Startup card ===================== -->
             <Border Style="{StaticResource Style.Card}" Padding="24" Margin="0,0,0,16">

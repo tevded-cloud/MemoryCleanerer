@@ -24,16 +24,16 @@
         <!-- ===================== Header (from Unit 1) ===================== -->
         <StackPanel Grid.Row="0">
             <TextBlock Text="SYSTEM STATUS" Style="{StaticResource Style.Text.Kicker}"/>
-            <TextBlock Text="Your memory" Style="{StaticResource Style.Text.PageTitle}" Margin="0,6,0,10"/>
+            <TextBlock Text="Your memory" Style="{StaticResource Style.Text.PageTitle}" Margin="0,4,0,6"/>
             <TextBlock Text="Live usage, session stats and one-click cleanup."
-                       Style="{StaticResource Style.Text.Body}" Margin="0,0,0,24"/>
+                       Style="{StaticResource Style.Text.Body}" Margin="0,0,0,14"/>
         </StackPanel>
 
         <!-- ===================== Usage gauge card ===================== -->
         <Border Grid.Row="1"
                 Style="{StaticResource Style.Card}"
-                Padding="24"
-                Margin="0,0,0,16">
+                Padding="18,14"
+                Margin="0,0,0,12">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -48,7 +48,7 @@
                 <StackPanel Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,32,0">
                     <TextBlock Text="{Binding LoadPercent, StringFormat={}{0}%}"
                                FontFamily="{StaticResource Font.Default}"
-                               FontSize="44" FontWeight="Bold"
+                               FontSize="34" FontWeight="Bold"
                                Foreground="{StaticResource Brush.TextPrimary}"/>
                     <TextBlock Text="memory load"
                                Style="{StaticResource Style.Text.Body}" FontSize="12" Margin="0,2,0,0"/>
@@ -72,7 +72,7 @@
                 </StackPanel>
 
                 <!-- Below: two muted stat rows -->
-                <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,22,0,0">
+                <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,14,0,0">
                     <WrapPanel Orientation="Horizontal" Margin="0,0,0,8">
                         <StackPanel Orientation="Horizontal" Margin="0,0,24,4">
                             <TextBlock Text="Pagefile: " Style="{StaticResource Style.Text.Body}" FontSize="12"/>
@@ -131,7 +131,7 @@
             -->
             <Border Grid.Column="0"
                     Style="{StaticResource Style.Card}"
-                    Padding="20"
+                    Padding="16"
                     Margin="0,0,8,0"
                     VerticalAlignment="Top">
                 <StackPanel>
@@ -140,7 +140,7 @@
                                Foreground="{StaticResource Brush.TextPrimary}"
                                Margin="0,0,0,4"/>
                     <TextBlock Text="One-click cleanup actions."
-                               Style="{StaticResource Style.Text.Body}" Margin="0,0,0,14"/>
+                               Style="{StaticResource Style.Text.Body}" Margin="0,0,0,10"/>
 
                     <UniformGrid Rows="2" Columns="2">
                         <Button Style="{StaticResource Style.Button.GhostRow}"
@@ -205,7 +205,7 @@
             <!-- ===================== Results card ===================== -->
             <Border Grid.Column="1"
                     Style="{StaticResource Style.Card}"
-                    Padding="20"
+                    Padding="16"
                     Margin="8,0,0,0">
                 <Grid>
                     <Grid.RowDefinitions>
@@ -213,7 +213,7 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    <StackPanel Grid.Row="0" Margin="0,0,0,16">
+                    <StackPanel Grid.Row="0" Margin="0,0,0,10">
                         <TextBlock Text="Results" FontFamily="{StaticResource Font.Default}"
                                    FontSize="15" FontWeight="Bold"
                                    Foreground="{StaticResource Brush.TextPrimary}"/>
