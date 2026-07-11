@@ -89,7 +89,7 @@ public partial class MemoryViewModel : ObservableObject
         };
 
         // Populate immediately so the gauge doesn't sit at 0% for the first second, then
-        // poll once a second for the lifetime of the app (the view is never torn down).
+        // poll once a second while this page is shown.
         RefreshSnapshot();
 
         _timer = new DispatcherTimer
@@ -98,6 +98,26 @@ public partial class MemoryViewModel : ObservableObject
         };
         _timer.Tick += (_, _) => RefreshSnapshot();
         _timer.Start();
+
+        // Surface automatic cleanups the scheduler performs in the same results list. The event is
+        // already marshalled onto the UI thread by SchedulerService.
+        SchedulerService.Instance.ActionCompleted += OnAutoActionCompleted;
+    }
+
+    /// <summary>
+    /// Detaches from live sources (the poll timer and the scheduler event). Called by the view on
+    /// Unload so a navigated-away page stops polling and does not leak as a dangling subscriber.
+    /// </summary>
+    public void Detach()
+    {
+        _timer.Stop();
+        SchedulerService.Instance.ActionCompleted -= OnAutoActionCompleted;
+    }
+
+    private void OnAutoActionCompleted(string message)
+    {
+        // Newest on top, matching the manual-task rows.
+        Results.Insert(0, new TaskResult(true, "Automatic cleanup", message));
     }
 
     partial void OnIsBusyChanged(bool value) => OnPropertyChanged(nameof(IsNotBusy));

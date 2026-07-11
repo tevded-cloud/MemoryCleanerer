@@ -3,15 +3,175 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:Cleanerer.ViewModels"
              mc:Ignorable="d"
-             d:DesignHeight="720" d:DesignWidth="840"
+             d:DesignHeight="820" d:DesignWidth="840"
+             d:DataContext="{d:DesignInstance Type=vm:OptionsViewModel}"
              Background="{StaticResource Brush.Bg}">
-    <StackPanel Margin="32">
-        <TextBlock Text="CONTROL" Style="{StaticResource Style.Text.Kicker}"/>
-        <TextBlock Text="Options" Style="{StaticResource Style.Text.PageTitle}" Margin="0,6,0,10"/>
-        <TextBlock Text="Timers, thresholds and startup behavior for Cleanerer."
-                   Style="{StaticResource Style.Text.Body}" Margin="0,0,0,24"/>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="32">
+            <!-- ===================== Header ===================== -->
+            <TextBlock Text="CONTROL" Style="{StaticResource Style.Text.Kicker}"/>
+            <TextBlock Text="Options" Style="{StaticResource Style.Text.PageTitle}" Margin="0,6,0,10"/>
+            <TextBlock Text="Timers, thresholds and startup behavior for Cleanerer."
+                       Style="{StaticResource Style.Text.Body}" Margin="0,0,0,24"/>
 
-        <Border Style="{StaticResource Style.Card}" Padding="24" Height="220"/>
-    </StackPanel>
+            <!-- ===================== Startup card ===================== -->
+            <Border Style="{StaticResource Style.Card}" Padding="24" Margin="0,0,0,20">
+                <StackPanel>
+                    <TextBlock Text="Startup" FontFamily="{StaticResource Font.Default}"
+                               FontSize="15" FontWeight="Bold"
+                               Foreground="{StaticResource Brush.TextPrimary}" Margin="0,0,0,4"/>
+                    <TextBlock Text="How Cleanerer launches and lives in the background."
+                               Style="{StaticResource Style.Text.Body}" Margin="0,0,0,18"/>
+
+                    <!-- Start with Windows -->
+                    <Grid Margin="0,0,0,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Margin="0,0,16,0">
+                            <TextBlock Text="Start Cleanerer with Windows" FontWeight="SemiBold" FontSize="13"
+                                       Foreground="{StaticResource Brush.TextPrimary}"/>
+                            <TextBlock Text="Launch automatically when you sign in."
+                                       Style="{StaticResource Style.Text.Body}" FontSize="12" Margin="0,3,0,0"/>
+                        </StackPanel>
+                        <CheckBox Grid.Column="1" Style="{StaticResource Style.Toggle}"
+                                  IsChecked="{Binding StartWithWindows}"/>
+                    </Grid>
+
+                    <!-- Run in background -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Margin="0,0,16,0">
+                            <TextBlock Text="Keep running in the background" FontWeight="SemiBold" FontSize="13"
+                                       Foreground="{StaticResource Brush.TextPrimary}"/>
+                            <TextBlock Text="Minimize to the tray instead of quitting when you close the window."
+                                       Style="{StaticResource Style.Text.Body}" FontSize="12" Margin="0,3,0,0"/>
+                        </StackPanel>
+                        <CheckBox Grid.Column="1" Style="{StaticResource Style.Toggle}"
+                                  IsChecked="{Binding RunInBackground}"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- ===================== Automatic cleanup card ===================== -->
+            <Border Style="{StaticResource Style.Card}" Padding="24">
+                <StackPanel>
+                    <TextBlock Text="Automatic cleanup" FontFamily="{StaticResource Font.Default}"
+                               FontSize="15" FontWeight="Bold"
+                               Foreground="{StaticResource Brush.TextPrimary}" Margin="0,0,0,4"/>
+                    <TextBlock Text="Run cleanups on a timer or when memory gets tight. All off by default."
+                               Style="{StaticResource Style.Text.Body}" Margin="0,0,0,18"/>
+
+                    <!-- Trim on interval -->
+                    <Grid Margin="0,0,0,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Margin="0,0,16,0" VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Trim working sets every" VerticalAlignment="Center"
+                                           FontWeight="SemiBold" FontSize="13"
+                                           Foreground="{StaticResource Brush.TextPrimary}"/>
+                                <TextBox Style="{StaticResource Style.TextBox.Numeric}" Margin="10,0,10,0"
+                                         IsEnabled="{Binding TrimIntervalEnabled}"
+                                         Text="{Binding TrimIntervalMinutes, UpdateSourceTrigger=LostFocus}"/>
+                                <TextBlock Text="minutes" VerticalAlignment="Center"
+                                           FontWeight="SemiBold" FontSize="13"
+                                           Foreground="{StaticResource Brush.TextPrimary}"/>
+                            </StackPanel>
+                            <TextBlock Text="Force every process to release unused physical memory on a schedule."
+                                       Style="{StaticResource Style.Text.Body}" FontSize="12" Margin="0,6,0,0"/>
+                        </StackPanel>
+                        <CheckBox Grid.Column="1" Style="{StaticResource Style.Toggle}"
+                                  IsChecked="{Binding TrimIntervalEnabled}"/>
+                    </Grid>
+
+                    <!-- Clear cache on interval -->
+                    <Grid Margin="0,0,0,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Margin="0,0,16,0" VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Clear system cache every" VerticalAlignment="Center"
+                                           FontWeight="SemiBold" FontSize="13"
+                                           Foreground="{StaticResource Brush.TextPrimary}"/>
+                                <TextBox Style="{StaticResource Style.TextBox.Numeric}" Margin="10,0,10,0"
+                                         IsEnabled="{Binding CacheIntervalEnabled}"
+                                         Text="{Binding CacheIntervalMinutes, UpdateSourceTrigger=LostFocus}"/>
+                                <TextBlock Text="minutes" VerticalAlignment="Center"
+                                           FontWeight="SemiBold" FontSize="13"
+                                           Foreground="{StaticResource Brush.TextPrimary}"/>
+                            </StackPanel>
+                            <TextBlock Text="Flush the file cache and purge standby memory on a schedule. Needs admin."
+                                       Style="{StaticResource Style.Text.Body}" FontSize="12" Margin="0,6,0,0"/>
+                        </StackPanel>
+                        <CheckBox Grid.Column="1" Style="{StaticResource Style.Toggle}"
+                                  IsChecked="{Binding CacheIntervalEnabled}"/>
+                    </Grid>
+
+                    <!-- Trim on threshold -->
+                    <Grid Margin="0,0,0,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Margin="0,0,16,0" VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Trim when memory usage exceeds" VerticalAlignment="Center"
+                                           FontWeight="SemiBold" FontSize="13"
+                                           Foreground="{StaticResource Brush.TextPrimary}"/>
+                                <TextBox Style="{StaticResource Style.TextBox.Numeric}" Margin="10,0,10,0"
+                                         IsEnabled="{Binding TrimThresholdEnabled}"
+                                         Text="{Binding TrimThresholdPercent, UpdateSourceTrigger=LostFocus}"/>
+                                <TextBlock Text="%" VerticalAlignment="Center"
+                                           FontWeight="SemiBold" FontSize="13"
+                                           Foreground="{StaticResource Brush.TextPrimary}"/>
+                            </StackPanel>
+                            <TextBlock Text="Trim automatically when memory load crosses this level."
+                                       Style="{StaticResource Style.Text.Body}" FontSize="12" Margin="0,6,0,0"/>
+                        </StackPanel>
+                        <CheckBox Grid.Column="1" Style="{StaticResource Style.Toggle}"
+                                  IsChecked="{Binding TrimThresholdEnabled}"/>
+                    </Grid>
+
+                    <!-- Clear cache on threshold -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Margin="0,0,16,0" VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Clear cache when usage exceeds" VerticalAlignment="Center"
+                                           FontWeight="SemiBold" FontSize="13"
+                                           Foreground="{StaticResource Brush.TextPrimary}"/>
+                                <TextBox Style="{StaticResource Style.TextBox.Numeric}" Margin="10,0,10,0"
+                                         IsEnabled="{Binding CacheThresholdEnabled}"
+                                         Text="{Binding CacheThresholdPercent, UpdateSourceTrigger=LostFocus}"/>
+                                <TextBlock Text="%" VerticalAlignment="Center"
+                                           FontWeight="SemiBold" FontSize="13"
+                                           Foreground="{StaticResource Brush.TextPrimary}"/>
+                            </StackPanel>
+                            <TextBlock Text="Flush caches automatically when memory load crosses this level."
+                                       Style="{StaticResource Style.Text.Body}" FontSize="12" Margin="0,6,0,0"/>
+                        </StackPanel>
+                        <CheckBox Grid.Column="1" Style="{StaticResource Style.Toggle}"
+                                  IsChecked="{Binding CacheThresholdEnabled}"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <TextBlock Text="Changes save instantly. Auto-actions apply a 5-minute cooldown so a busy machine is not cleaned every tick. Start-with-Windows writes a per-user registry entry."
+                       Style="{StaticResource Style.Text.Body}" FontSize="11" Margin="2,16,0,0"/>
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>

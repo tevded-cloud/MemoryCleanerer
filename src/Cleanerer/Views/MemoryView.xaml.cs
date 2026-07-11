@@ -11,6 +11,11 @@ public partial class MemoryView : System.Windows.Controls.UserControl
     public MemoryView()
     {
         InitializeComponent();
-        DataContext = new MemoryViewModel();
+        var viewModel = new MemoryViewModel();
+        DataContext = viewModel;
+
+        // Navigation swaps this view out (MainViewModel news up a fresh one each time), so stop
+        // the poll timer and unsubscribe from the scheduler when we leave to avoid leaks.
+        Unloaded += (_, _) => viewModel.Detach();
     }
 }
