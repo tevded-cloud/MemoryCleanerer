@@ -14,7 +14,7 @@
         <conv:GaugeLevelToBrushConverter x:Key="GaugeLevelToBrushConverter"/>
     </UserControl.Resources>
 
-    <Grid Margin="32">
+    <Grid Margin="20,16,20,20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -121,6 +121,14 @@
             </Grid.ColumnDefinitions>
 
             <!-- ===================== Tasks card ===================== -->
+            <!--
+                Condensed 2x2 grid of compact buttons: at MinHeight=640 (title bar 40 + 16/20
+                gutters + the gauge card above eat ~300px, leaving ~264px for this row) a single
+                stacked column of four full Style.Button.GhostRow buttons (~277-355px) is too
+                tight or clips outright. A 2x2 UniformGrid needs only ~181px (40 card padding +
+                ~53 header + two 41px button rows + 6px gap), leaving ~80px of slack even at the
+                minimum window size.
+            -->
             <Border Grid.Column="0"
                     Style="{StaticResource Style.Card}"
                     Padding="20"
@@ -132,54 +140,65 @@
                                Foreground="{StaticResource Brush.TextPrimary}"
                                Margin="0,0,0,4"/>
                     <TextBlock Text="One-click cleanup actions."
-                               Style="{StaticResource Style.Text.Body}" Margin="0,0,0,16"/>
+                               Style="{StaticResource Style.Text.Body}" Margin="0,0,0,14"/>
 
-                    <Button Style="{StaticResource Style.Button.GhostRow}"
-                            Command="{Binding TrimCommand}"
-                            IsEnabled="{Binding IsNotBusy}"
-                            Margin="0,0,0,10">
-                        <StackPanel>
-                            <TextBlock Text="Trim working sets" FontWeight="SemiBold" FontSize="13"
-                                       Foreground="{StaticResource Brush.TextPrimary}"/>
-                            <TextBlock Text="Force every process to release unused physical memory."
-                                       Style="{StaticResource Style.Text.Body}" FontSize="11" Margin="0,3,0,0"/>
-                        </StackPanel>
-                    </Button>
+                    <UniformGrid Rows="2" Columns="2">
+                        <Button Style="{StaticResource Style.Button.GhostRow}"
+                                Command="{Binding TrimCommand}"
+                                IsEnabled="{Binding IsNotBusy}"
+                                Padding="8,5"
+                                Margin="0,0,6,6">
+                            <StackPanel>
+                                <TextBlock Text="Trim working sets" FontWeight="SemiBold" FontSize="12"
+                                           Foreground="{StaticResource Brush.TextPrimary}"/>
+                                <TextBlock Text="Release unused RAM."
+                                           Style="{StaticResource Style.Text.Body}" FontSize="10" Margin="0,2,0,0"
+                                           TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
+                            </StackPanel>
+                        </Button>
 
-                    <Button Style="{StaticResource Style.Button.GhostRow}"
-                            Command="{Binding ClearCacheCommand}"
-                            IsEnabled="{Binding IsNotBusy}"
-                            Margin="0,0,0,10">
-                        <StackPanel>
-                            <TextBlock Text="Clear system cache" FontWeight="SemiBold" FontSize="13"
-                                       Foreground="{StaticResource Brush.TextPrimary}"/>
-                            <TextBlock Text="Flush the file cache and purge standby memory. Needs admin."
-                                       Style="{StaticResource Style.Text.Body}" FontSize="11" Margin="0,3,0,0"/>
-                        </StackPanel>
-                    </Button>
+                        <Button Style="{StaticResource Style.Button.GhostRow}"
+                                Command="{Binding ClearCacheCommand}"
+                                IsEnabled="{Binding IsNotBusy}"
+                                Padding="8,5"
+                                Margin="6,0,0,6">
+                            <StackPanel>
+                                <TextBlock Text="Clear system cache" FontWeight="SemiBold" FontSize="12"
+                                           Foreground="{StaticResource Brush.TextPrimary}"/>
+                                <TextBlock Text="Flush cache. Needs admin."
+                                           Style="{StaticResource Style.Text.Body}" FontSize="10" Margin="0,2,0,0"
+                                           TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
+                            </StackPanel>
+                        </Button>
 
-                    <Button Style="{StaticResource Style.Button.GhostRow}"
-                            Command="{Binding ClearClipboardCommand}"
-                            IsEnabled="{Binding IsNotBusy}"
-                            Margin="0,0,0,10">
-                        <StackPanel>
-                            <TextBlock Text="Clear clipboard" FontWeight="SemiBold" FontSize="13"
-                                       Foreground="{StaticResource Brush.TextPrimary}"/>
-                            <TextBlock Text="Wipe whatever is currently held on the clipboard."
-                                       Style="{StaticResource Style.Text.Body}" FontSize="11" Margin="0,3,0,0"/>
-                        </StackPanel>
-                    </Button>
+                        <Button Style="{StaticResource Style.Button.GhostRow}"
+                                Command="{Binding ClearClipboardCommand}"
+                                IsEnabled="{Binding IsNotBusy}"
+                                Padding="8,5"
+                                Margin="0,6,6,0">
+                            <StackPanel>
+                                <TextBlock Text="Clear clipboard" FontWeight="SemiBold" FontSize="12"
+                                           Foreground="{StaticResource Brush.TextPrimary}"/>
+                                <TextBlock Text="Wipe clipboard contents."
+                                           Style="{StaticResource Style.Text.Body}" FontSize="10" Margin="0,2,0,0"
+                                           TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
+                            </StackPanel>
+                        </Button>
 
-                    <Button Style="{StaticResource Style.Button.GhostRow}"
-                            Command="{Binding RestartExplorerCommand}"
-                            IsEnabled="{Binding IsNotBusy}">
-                        <StackPanel>
-                            <TextBlock Text="Restart Explorer" FontWeight="SemiBold" FontSize="13"
-                                       Foreground="{StaticResource Brush.TextPrimary}"/>
-                            <TextBlock Text="Restart the Windows shell to release leaked UI memory."
-                                       Style="{StaticResource Style.Text.Body}" FontSize="11" Margin="0,3,0,0"/>
-                        </StackPanel>
-                    </Button>
+                        <Button Style="{StaticResource Style.Button.GhostRow}"
+                                Command="{Binding RestartExplorerCommand}"
+                                IsEnabled="{Binding IsNotBusy}"
+                                Padding="8,5"
+                                Margin="6,6,0,0">
+                            <StackPanel>
+                                <TextBlock Text="Restart Explorer" FontWeight="SemiBold" FontSize="12"
+                                           Foreground="{StaticResource Brush.TextPrimary}"/>
+                                <TextBlock Text="Reclaim leaked shell memory."
+                                           Style="{StaticResource Style.Text.Body}" FontSize="10" Margin="0,2,0,0"
+                                           TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
+                            </StackPanel>
+                        </Button>
+                    </UniformGrid>
                 </StackPanel>
             </Border>
 

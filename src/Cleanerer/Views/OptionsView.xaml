@@ -9,7 +9,7 @@
              d:DataContext="{d:DesignInstance Type=vm:OptionsViewModel}"
              Background="{StaticResource Brush.Bg}">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel Margin="32">
+        <StackPanel Margin="20,16,20,20">
             <!-- ===================== Header ===================== -->
             <TextBlock Text="CONTROL" Style="{StaticResource Style.Text.Kicker}"/>
             <TextBlock Text="Options" Style="{StaticResource Style.Text.PageTitle}" Margin="0,6,0,10"/>

@@ -1,12 +1,15 @@
+using System;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Interop;
+using Cleanerer.Interop;
 using Cleanerer.Services;
 
 namespace Cleanerer;
 
 /// <summary>
-/// Main shell window: custom title bar chrome (minimize / maximize-restore / close)
-/// plus the sidebar-navigated content area driven by MainViewModel.
+/// Main shell window: custom title bar chrome (minimize / maximize-restore / close, plus the
+/// top-bar navigation strip) hosting the content area driven by MainViewModel.
 ///
 /// Minimize keeps the normal taskbar behavior (it does NOT go to the tray). Only Close
 /// backgrounds the app: when <see cref="AppSettings.RunInBackground"/> is on, closing cancels
@@ -22,6 +25,32 @@ public partial class MainWindow : Window
         InitializeComponent();
         StateChanged += (_, _) => UpdateMaximizeRestoreGlyph();
         UpdateMaximizeRestoreGlyph();
+    }
+
+    /// <summary>
+    /// Windows 11 rounds standard windows automatically, but a custom-chrome (WindowChrome)
+    /// window like this one renders square corners unless explicitly told otherwise via DWM.
+    /// Older Windows 10 doesn't know this attribute at all, so failures are swallowed silently —
+    /// the app must still run there, just without rounded corners.
+    /// </summary>
+    protected override void OnSourceInitialized(EventArgs e)
+    {
+        base.OnSourceInitialized(e);
+
+        try
+        {
+            var hwnd = new WindowInteropHelper(this).Handle;
+            var preference = NativeMethods.DWMWCP_ROUND;
+            NativeMethods.DwmSetWindowAttribute(
+                hwnd,
+                NativeMethods.DWMWA_WINDOW_CORNER_PREFERENCE,
+                ref preference,
+                sizeof(int));
+        }
+        catch
+        {
+            // Attribute unsupported (pre-Windows 11) or dwmapi unavailable — not fatal.
+        }
     }
 
     private void MinimizeButton_Click(object sender, RoutedEventArgs e)

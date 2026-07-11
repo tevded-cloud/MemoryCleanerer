@@ -230,10 +230,11 @@
         </Setter>
     </Style>
 
-    <!-- Ghost variant used for the window caption buttons (minimize/maximize); close uses Style.Button.CaptionClose -->
+    <!-- Ghost variant used for the window caption buttons (minimize/maximize); close uses Style.Button.CaptionClose.
+         Width is the fixed hit-target; Height fills the 40px title bar exactly. -->
     <Style x:Key="Style.Button.Caption" TargetType="Button">
-        <Setter Property="Width" Value="46"/>
-        <Setter Property="Height" Value="32"/>
+        <Setter Property="Width" Value="40"/>
+        <Setter Property="Height" Value="40"/>
         <Setter Property="Foreground" Value="{StaticResource Brush.TextMuted}"/>
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="BorderThickness" Value="0"/>
@@ -325,10 +326,12 @@
         <Setter Property="CornerRadius" Value="{StaticResource Radius.Card}"/>
     </Style>
 
-    <!-- ==================== Pill badge (e.g. "Free forever") ==================== -->
-    <Style x:Key="Style.Pill.Success" TargetType="Border">
+    <!-- ==================== Badge (e.g. "Free forever") ====================
+         Normal rounded-rectangle badge (not a pill): used on the title bar and the About
+         page's identity card. -->
+    <Style x:Key="Style.Badge.Success" TargetType="Border">
         <Setter Property="Background" Value="{StaticResource Brush.SuccessDim}"/>
-        <Setter Property="CornerRadius" Value="{StaticResource Radius.Pill}"/>
+        <Setter Property="CornerRadius" Value="6"/>
         <Setter Property="Padding" Value="10,3"/>
     </Style>
 

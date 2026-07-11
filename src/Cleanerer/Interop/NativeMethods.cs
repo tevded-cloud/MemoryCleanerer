@@ -203,4 +203,27 @@ internal static class NativeMethods
     [DllImport("user32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     internal static extern bool DestroyIcon(IntPtr hIcon);
+
+    // ============================================================
+    // dwmapi
+    // ============================================================
+
+    /// <summary>DWMWA_WINDOW_CORNER_PREFERENCE — the DwmSetWindowAttribute attribute id used to
+    /// request rounded corners on a custom-chrome (WindowChrome) window on Windows 11.</summary>
+    internal const int DWMWA_WINDOW_CORNER_PREFERENCE = 33;
+
+    /// <summary>DWMWCP_ROUND — one of the DWM_WINDOW_CORNER_PREFERENCE enum values.</summary>
+    internal const int DWMWCP_ROUND = 2;
+
+    /// <summary>
+    /// DwmSetWindowAttribute. Unsupported attributes (e.g. DWMWA_WINDOW_CORNER_PREFERENCE on
+    /// Windows 10, which predates it) return a failure HRESULT rather than throwing, but the
+    /// call site still wraps this in try/catch in case dwmapi.dll itself is unavailable.
+    /// </summary>
+    [DllImport("dwmapi.dll")]
+    internal static extern int DwmSetWindowAttribute(
+        IntPtr hwnd,
+        int dwAttribute,
+        ref int pvAttribute,
+        int cbAttribute);
 }

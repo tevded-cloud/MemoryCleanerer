@@ -7,7 +7,7 @@
              d:DesignHeight="720" d:DesignWidth="840"
              Background="{StaticResource Brush.Bg}">
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-    <StackPanel Margin="32">
+    <StackPanel Margin="20,16,20,20">
         <TextBlock Text="SHIP" Style="{StaticResource Style.Text.Kicker}"/>
         <TextBlock Text="About" Style="{StaticResource Style.Text.PageTitle}" Margin="0,6,0,10"/>
         <TextBlock Text="Version, credits, and an honest account of what this app does."
@@ -36,7 +36,7 @@
                     All features free, forever.
                 </TextBlock>
 
-                <Border Style="{StaticResource Style.Pill.Success}" HorizontalAlignment="Left">
+                <Border Style="{StaticResource Style.Badge.Success}" HorizontalAlignment="Left">
                     <TextBlock Text="Free forever" FontSize="10" FontWeight="SemiBold"
                                Foreground="{StaticResource Brush.Success}"/>
                 </Border>
