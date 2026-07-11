@@ -11,6 +11,7 @@
              Background="{StaticResource Brush.Bg}">
     <UserControl.Resources>
         <conv:StringEmptyToVisibilityConverter x:Key="StringEmptyToVisibilityConverter"/>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
     </UserControl.Resources>
 
     <Grid Margin="32">
@@ -18,6 +19,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <!-- ===================== Header ===================== -->
@@ -159,5 +161,91 @@
                 </TextBlock.Style>
             </TextBlock>
         </Grid>
+
+        <!-- ===================== Automatic rules card ===================== -->
+        <Border Grid.Row="3" Style="{StaticResource Style.Card}" Padding="20" Margin="0,18,0,0">
+            <StackPanel>
+                <TextBlock Text="Automatic rules" Style="{StaticResource Style.Text.PageTitle}" FontSize="17"/>
+                <TextBlock Text="Cleanerer trims or kills matching processes automatically. Core Windows processes are always protected — a Kill rule aimed at one is blocked."
+                           Style="{StaticResource Style.Text.Body}" FontSize="12" Margin="0,4,0,14"/>
+
+                <ScrollViewer MaxHeight="200" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <ItemsControl ItemsSource="{Binding Rules}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="{x:Type vm:RuleRowViewModel}">
+                                <StackPanel Margin="0,6">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <CheckBox Grid.Column="0"
+                                                  Style="{StaticResource Style.Toggle}"
+                                                  IsChecked="{Binding Enabled}"
+                                                  Margin="0,0,14,0"/>
+
+                                        <Grid Grid.Column="1" Margin="0,0,12,0">
+                                            <TextBox x:Name="RuleName"
+                                                     Style="{StaticResource Style.TextBox.Rule}"
+                                                     Text="{Binding MatchName, UpdateSourceTrigger=PropertyChanged}"/>
+                                            <TextBlock Text="any process"
+                                                       Style="{StaticResource Style.Text.Body}"
+                                                       FontSize="12"
+                                                       IsHitTestVisible="False"
+                                                       VerticalAlignment="Center"
+                                                       Margin="10,0,0,0"
+                                                       Visibility="{Binding MatchName, Converter={StaticResource StringEmptyToVisibilityConverter}}"/>
+                                        </Grid>
+
+                                        <TextBlock Grid.Column="2" Text="working set >"
+                                                   Style="{StaticResource Style.Text.Body}" FontSize="12"
+                                                   VerticalAlignment="Center" Margin="0,0,8,0"/>
+
+                                        <TextBox Grid.Column="3"
+                                                 Style="{StaticResource Style.TextBox.Numeric}"
+                                                 Text="{Binding ThresholdMb, UpdateSourceTrigger=LostFocus}"/>
+
+                                        <TextBlock Grid.Column="4" Text="MB"
+                                                   Style="{StaticResource Style.Text.Body}" FontSize="12"
+                                                   VerticalAlignment="Center" Margin="8,0,12,0"/>
+
+                                        <ComboBox Grid.Column="5"
+                                                  Style="{StaticResource Style.ComboBox}"
+                                                  Width="86"
+                                                  ItemsSource="{Binding ActionOptions}"
+                                                  SelectedItem="{Binding Action}"/>
+
+                                        <Button Grid.Column="7" Content="Delete"
+                                                Style="{StaticResource Style.Button.DangerOutlineCompact}"
+                                                Command="{Binding DeleteCommand}"/>
+                                    </Grid>
+
+                                    <TextBlock Text="⚠ protected — kill will be blocked"
+                                               Foreground="{StaticResource Brush.Danger}"
+                                               Opacity="0.85"
+                                               FontSize="11"
+                                               FontWeight="SemiBold"
+                                               Margin="54,4,0,0"
+                                               Visibility="{Binding ShowProtectedWarning, Converter={StaticResource BoolToVis}}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+
+                <!-- Add-a-rule dashed CTA -->
+                <Button Style="{StaticResource Style.Card.DashedCta}"
+                        Command="{Binding AddRuleCommand}"
+                        Margin="0,10,0,0"
+                        Content="＋  Add a rule — e.g. trim chrome when it passes 2,048 MB"/>
+            </StackPanel>
+        </Border>
     </Grid>
 </UserControl>

@@ -1,8 +1,10 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows.Data;
 using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Cleanerer.Services;
 
 namespace Cleanerer.ViewModels;
@@ -16,13 +18,22 @@ namespace Cleanerer.ViewModels;
 public partial class ProcessesViewModel : ObservableObject
 {
     private readonly ProcessMonitorService _monitor = new();
+    private readonly RulesService _rulesService;
+    private readonly SchedulerService _scheduler;
     private readonly DispatcherTimer _pollTimer;
     private readonly DispatcherTimer _statusClearTimer;
     private readonly ICollectionView _rowsView;
     private bool _isSampling;
+    private bool _loadingRules;
 
     /// <summary>Every known process, keyed implicitly by PID (one <see cref="ProcessRowViewModel"/> per PID).</summary>
     public ObservableCollection<ProcessRowViewModel> Rows { get; } = new();
+
+    /// <summary>The editable auto-management rules shown in the "Automatic rules" card.</summary>
+    public ObservableCollection<RuleRowViewModel> Rules { get; } = new();
+
+    /// <summary>Appends a new default rule (any process, &gt; 1024 MB, Trim) and persists.</summary>
+    public IRelayCommand AddRuleCommand { get; }
 
     /// <summary>Filtered + sortable view over <see cref="Rows"/> that the grid binds to.</summary>
     public ICollectionView RowsView => _rowsView;
@@ -44,11 +55,26 @@ public partial class ProcessesViewModel : ObservableObject
     private bool _statusIsError;
 
     public ProcessesViewModel()
+        : this(RulesService.Instance, SchedulerService.Instance)
     {
+    }
+
+    // Injectable constructor: the pure rules logic lives in RuleEngine (tested directly); this
+    // overload keeps the singletons swappable and documents the dependencies.
+    public ProcessesViewModel(RulesService rulesService, SchedulerService scheduler)
+    {
+        _rulesService = rulesService;
+        _scheduler = scheduler;
+
+        AddRuleCommand = new RelayCommand(AddRule);
+
         _rowsView = CollectionViewSource.GetDefaultView(Rows);
         _rowsView.Filter = FilterRow;
         _rowsView.SortDescriptions.Add(
             new SortDescription(nameof(ProcessRowViewModel.WorkingSetBytes), ListSortDirection.Descending));
+
+        LoadRules();
+        _scheduler.RuleActionReported += OnRuleActionReported;
 
         _pollTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(2) };
         _pollTimer.Tick += async (_, _) => await RefreshAsync();
@@ -66,15 +92,62 @@ public partial class ProcessesViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Stops the poll timer and the status-clear timer. Called by the view on Unload so a
-    /// navigated-away page stops sampling every process twice a second (see
-    /// <see cref="MemoryViewModel.Detach"/> for the same pattern on the Memory page).
+    /// Stops the poll timer and the status-clear timer, and unsubscribes from scheduler rule reports.
+    /// Called by the view on Unload so a navigated-away page stops sampling every process twice a
+    /// second (see <see cref="MemoryViewModel.Detach"/> for the same pattern on the Memory page).
     /// </summary>
     public void Detach()
     {
         _pollTimer.Stop();
         _statusClearTimer.Stop();
+        _scheduler.RuleActionReported -= OnRuleActionReported;
     }
+
+    // ---- Rules -----------------------------------------------------------------------------
+
+    private void LoadRules()
+    {
+        _loadingRules = true;
+        try
+        {
+            Rules.Clear();
+            foreach (ProcessRule rule in _rulesService.Current)
+            {
+                Rules.Add(new RuleRowViewModel(rule, PersistRules, DeleteRule));
+            }
+        }
+        finally
+        {
+            _loadingRules = false;
+        }
+    }
+
+    private void AddRule()
+    {
+        // Enabled with a wildcard match is valid, but the default is a Trim (reversible) so a
+        // fresh, unconfigured rule can never kill anything before the user names a target.
+        var rule = new ProcessRule { MatchName = string.Empty, ThresholdMb = 1024, Action = RuleAction.Trim, Enabled = true };
+        Rules.Add(new RuleRowViewModel(rule, PersistRules, DeleteRule));
+        PersistRules();
+    }
+
+    private void DeleteRule(RuleRowViewModel row)
+    {
+        Rules.Remove(row);
+        PersistRules();
+    }
+
+    private void PersistRules()
+    {
+        if (_loadingRules)
+        {
+            return;
+        }
+
+        _rulesService.Save(Rules.Select(r => r.ToRule()).ToList());
+    }
+
+    private void OnRuleActionReported(string message) => SetStatus(!message.Contains("blocked") && !message.Contains("failed"), message);
 
     partial void OnSearchTextChanged(string value) => _rowsView.Refresh();
 

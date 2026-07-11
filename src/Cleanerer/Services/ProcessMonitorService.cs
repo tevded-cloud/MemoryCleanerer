@@ -147,13 +147,14 @@ public class ProcessMonitorService
     }
 
     /// <summary>
-    /// Kills a single process outright.
+    /// Kills a single process outright, WITHOUT consulting the whitelist.
     ///
-    /// TODO(unit-6b): route through the kill whitelist before this is reachable from any
-    /// automatic/rules-driven caller. There is no whitelist yet — today this only fires from
-    /// an explicit, user-initiated button click on the Processes page, and callers should keep
-    /// it that way until unit 6b lands. Kept internal so only code in this assembly (the
-    /// view-model, and later the rules engine) can call it directly.
+    /// unit-6b: the kill whitelist now lives in <see cref="ProcessGuard"/>. Any automatic /
+    /// rules-driven kill MUST go through <see cref="KillProcessChecked"/>, which re-resolves the live
+    /// process name by PID and refuses protected processes immediately before pulling the trigger.
+    /// This raw variant stays <c>internal</c> and is reserved for the explicit, user-initiated Kill
+    /// button on the Processes page (a deliberate, human-in-the-loop action); no automatic caller may
+    /// use it.
     /// </summary>
     /// <returns><c>(true, message)</c> on success; <c>(false, message)</c> otherwise. Never throws.</returns>
     internal (bool Ok, string Message) KillProcess(int pid)
@@ -174,5 +175,91 @@ public class ProcessMonitorService
         {
             return (false, ex.Message);
         }
+    }
+
+    /// <summary>
+    /// Whitelist-checked kill for automatic/rules-driven callers. Defense in depth, in this order:
+    /// <list type="number">
+    ///   <item>Re-check the <paramref name="sampledName"/> the caller matched on against
+    ///   <see cref="ProcessGuard.IsProtected"/> (the sample may be seconds old).</item>
+    ///   <item>Re-resolve the LIVE name for <paramref name="pid"/> via
+    ///   <see cref="Process.GetProcessById"/> — the process list may have changed and the PID may now
+    ///   belong to a different, possibly protected, process — and check THAT name too.</item>
+    ///   <item>Only then kill, using the very handle we just verified (no third lookup to race).</item>
+    /// </list>
+    /// </summary>
+    /// <returns><c>(true, message)</c> on success; <c>(false, reason)</c> if blocked or it failed. Never throws.</returns>
+    public (bool Ok, string Message) KillProcessChecked(int pid, string? sampledName)
+    {
+        int ownPid = Environment.ProcessId;
+
+        if (ProcessGuard.IsProtected(sampledName, pid, ownPid))
+        {
+            return (false, $"Blocked kill of protected process {Describe(sampledName, pid)}");
+        }
+
+        try
+        {
+            using Process proc = Process.GetProcessById(pid);
+            string liveName = proc.ProcessName;
+
+            // The PID may have been reused since the sample; the live name is the authoritative one.
+            if (ProcessGuard.IsProtected(liveName, pid, ownPid))
+            {
+                return (false, $"Blocked kill of protected process {Describe(liveName, pid)}");
+            }
+
+            proc.Kill();
+            return (true, $"Killed {liveName} ({pid})");
+        }
+        catch (ArgumentException)
+        {
+            return (false, "Process already exited");
+        }
+        catch (Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    /// <summary>
+    /// Whitelist-checked trim for automatic/rules-driven callers. Like <see cref="KillProcessChecked"/>
+    /// it re-checks both the sampled name and the freshly re-resolved live name against
+    /// <see cref="ProcessGuard.IsTrimSafe"/> before delegating to <see cref="TrimProcess"/>.
+    /// </summary>
+    /// <returns><c>(true, message)</c> on success; <c>(false, reason)</c> if blocked or it failed. Never throws.</returns>
+    public (bool Ok, string Message) TrimProcessChecked(int pid, string? sampledName)
+    {
+        if (!ProcessGuard.IsTrimSafe(sampledName, pid))
+        {
+            return (false, $"Blocked trim of {Describe(sampledName, pid)}");
+        }
+
+        string liveName;
+        try
+        {
+            using Process proc = Process.GetProcessById(pid);
+            liveName = proc.ProcessName;
+        }
+        catch (ArgumentException)
+        {
+            return (false, "Process already exited");
+        }
+        catch (Exception ex)
+        {
+            return (false, ex.Message);
+        }
+
+        if (!ProcessGuard.IsTrimSafe(liveName, pid))
+        {
+            return (false, $"Blocked trim of {Describe(liveName, pid)}");
+        }
+
+        return TrimProcess(pid);
+    }
+
+    private static string Describe(string? name, int pid)
+    {
+        return string.IsNullOrWhiteSpace(name) ? $"(PID {pid})" : $"{name} (PID {pid})";
     }
 }

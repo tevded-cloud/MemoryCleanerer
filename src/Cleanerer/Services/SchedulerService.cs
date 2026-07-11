@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 
@@ -23,10 +24,22 @@ public class SchedulerService
     private static readonly TimeSpan TickInterval = TimeSpan.FromSeconds(30);
 
     private readonly SettingsService _settingsService;
+    private readonly RulesService _rulesService;
     private readonly CleanerService _cleaner = new();
     private readonly MemoryInfoService _memoryInfo = new();
+    private readonly ProcessMonitorService _monitor = new();
     private readonly DispatcherTimer _timer;
     private readonly Dictionary<ScheduleDecider.TriggerKey, DateTime> _lastRun = new();
+
+    /// <summary>When each PID was last auto-trimmed, feeding <see cref="RuleEngine.TrimCooldown"/>.</summary>
+    private readonly Dictionary<int, DateTime> _lastTrimByPid = new();
+
+    /// <summary>
+    /// (rule, PID) pairs whose guard-blocked warning has already been reported, so a standing rule
+    /// against a protected process does not spam the results log every 30-second tick. Pruned when
+    /// the PID disappears.
+    /// </summary>
+    private readonly HashSet<(Guid RuleId, int Pid)> _reportedBlocks = new();
 
     private AppSettings _settings;
     private bool _running;
@@ -38,15 +51,24 @@ public class SchedulerService
     /// </summary>
     public event Action<string>? ActionCompleted;
 
-    private SchedulerService() : this(SettingsService.Instance)
+    /// <summary>
+    /// Raised when an auto-management RULE acts (or is blocked), e.g.
+    /// "Rule 'chrome &gt; 2048 MB': trimmed chrome (PID 1234)". Consumed by the Processes page status
+    /// line. Rule outcomes are ALSO sent to <see cref="ActionCompleted"/> so the Memory page results
+    /// log records them too. Always fired on the UI dispatcher thread when one exists.
+    /// </summary>
+    public event Action<string>? RuleActionReported;
+
+    private SchedulerService() : this(SettingsService.Instance, RulesService.Instance)
     {
     }
 
     // Non-singleton constructor kept internal-friendly for potential future tests; the pure
-    // decision logic lives in ScheduleDecider, which is what the unit tests exercise.
-    private SchedulerService(SettingsService settingsService)
+    // decision logic lives in ScheduleDecider / RuleEngine, which is what the unit tests exercise.
+    private SchedulerService(SettingsService settingsService, RulesService rulesService)
     {
         _settingsService = settingsService;
+        _rulesService = rulesService;
         _settings = settingsService.Current;
         settingsService.SettingsChanged += OnSettingsChanged;
 
@@ -94,7 +116,8 @@ public class SchedulerService
 
     private void Tick()
     {
-        // One run at a time: a slow trim must not stack up behind the 30s timer.
+        // One run at a time: a slow trim (or a full process sweep for the rules pass) must not stack
+        // up behind the 30s timer.
         if (_busy)
         {
             return;
@@ -104,13 +127,16 @@ public class SchedulerService
         int loadPercent = _memoryInfo.Read().LoadPercent;
 
         IReadOnlyList<ScheduledAction> actions = ScheduleDecider.Decide(now, _settings, loadPercent, _lastRun);
-        if (actions.Count == 0)
+        bool anyEnabledRules = _rulesService.Current.Any(r => r.Enabled);
+
+        // Nothing to do this tick: neither a scheduled cleanup nor any enabled rule.
+        if (actions.Count == 0 && !anyEnabledRules)
         {
             return;
         }
 
-        // Stamp every fired lane now so the next tick sees the cooldown/interval reset even if the
-        // work is still running.
+        // Stamp every fired cleanup lane now so the next tick sees the cooldown/interval reset even
+        // if the work is still running.
         foreach (ScheduledAction action in actions)
         {
             foreach (TriggerReason reason in action.Reasons)
@@ -120,26 +146,120 @@ public class SchedulerService
         }
 
         _busy = true;
-        _ = Task.Run(() => RunActions(actions));
+        _ = Task.Run(() => RunTick(actions, now));
     }
 
-    private void RunActions(IReadOnlyList<ScheduledAction> actions)
+    private void RunTick(IReadOnlyList<ScheduledAction> actions, DateTime now)
     {
         try
         {
-            foreach (ScheduledAction action in actions)
-            {
-                CleanResult result = action.Kind == CleanupKind.Trim
-                    ? _cleaner.TrimWorkingSets()
-                    : _cleaner.ClearSystemCache();
-
-                RaiseCompleted(BuildMessage(action.Kind, result));
-            }
+            RunActions(actions);
+            RunRules(now);
         }
         finally
         {
             _busy = false;
         }
+    }
+
+    private void RunActions(IReadOnlyList<ScheduledAction> actions)
+    {
+        foreach (ScheduledAction action in actions)
+        {
+            CleanResult result = action.Kind == CleanupKind.Trim
+                ? _cleaner.TrimWorkingSets()
+                : _cleaner.ClearSystemCache();
+
+            RaiseCompleted(BuildMessage(action.Kind, result));
+        }
+    }
+
+    /// <summary>
+    /// The auto-management rules pass, run off the UI thread every tick. Samples every process, asks
+    /// the pure <see cref="RuleEngine"/> what is due, then executes the unblocked hits through the
+    /// whitelist-checked <see cref="ProcessMonitorService"/> entry points (defense in depth: the guard
+    /// is re-checked against the live process name at kill/trim time, not just the sample).
+    /// </summary>
+    private void RunRules(DateTime now)
+    {
+        IReadOnlyList<ProcessRule> rules = _rulesService.Current;
+        if (!rules.Any(r => r.Enabled))
+        {
+            return;
+        }
+
+        IReadOnlyList<ProcessSample> samples = _monitor.Sample();
+        int ownPid = Environment.ProcessId;
+        IReadOnlyList<RuleHit> hits = RuleEngine.Evaluate(samples, rules, ownPid, now, _lastTrimByPid);
+
+        foreach (RuleHit hit in hits)
+        {
+            if (hit.BlockedByGuard)
+            {
+                // Report a given protected target once per (rule, PID) so a standing "kill lsass"
+                // rule does not flood the log every 30 seconds.
+                if (_reportedBlocks.Add((hit.Rule.Id, hit.Target.Pid)))
+                {
+                    Report($"⚠ blocked: rule '{DescribeRule(hit.Rule)}' targets protected process {hit.Target.Name} (PID {hit.Target.Pid})");
+                }
+                continue;
+            }
+
+            if (hit.EffectiveAction == RuleAction.Kill)
+            {
+                (bool ok, string message) = _monitor.KillProcessChecked(hit.Target.Pid, hit.Target.Name);
+                Report(FormatResult(hit, ok, ok ? "killed" : "kill failed", message));
+            }
+            else
+            {
+                (bool ok, string message) = _monitor.TrimProcessChecked(hit.Target.Pid, hit.Target.Name);
+                if (ok)
+                {
+                    _lastTrimByPid[hit.Target.Pid] = now;
+                }
+                Report(FormatResult(hit, ok, ok ? "trimmed" : "trim failed", message));
+            }
+        }
+
+        PruneByLivePids(samples);
+    }
+
+    private static string DescribeRule(ProcessRule rule)
+    {
+        string name = string.IsNullOrWhiteSpace(rule.MatchName) ? "*" : rule.MatchName.Trim();
+        return $"{name} > {rule.ThresholdMb} MB";
+    }
+
+    private static string FormatResult(RuleHit hit, bool ok, string verb, string detail)
+    {
+        string rule = DescribeRule(hit.Rule);
+        return ok
+            ? $"Rule '{rule}': {verb} {hit.Target.Name} (PID {hit.Target.Pid})"
+            : $"Rule '{rule}': {verb} for {hit.Target.Name} (PID {hit.Target.Pid}) — {detail}";
+    }
+
+    /// <summary>Drops per-PID bookkeeping for processes that no longer exist (incl. ones we killed).</summary>
+    private void PruneByLivePids(IReadOnlyList<ProcessSample> samples)
+    {
+        var live = new HashSet<int>(samples.Count);
+        foreach (ProcessSample sample in samples)
+        {
+            live.Add(sample.Pid);
+        }
+
+        foreach (int pid in _lastTrimByPid.Keys.Where(p => !live.Contains(p)).ToList())
+        {
+            _lastTrimByPid.Remove(pid);
+        }
+
+        _reportedBlocks.RemoveWhere(key => !live.Contains(key.Pid));
+    }
+
+    /// <summary>Sends a rule outcome to both the Processes status line and the Memory results log.</summary>
+    private void Report(string message)
+    {
+        RaiseOnUi(RuleActionReported, message);
+        RaiseOnUi(ActionCompleted, message);
     }
 
     private static string BuildMessage(CleanupKind kind, CleanResult result)
@@ -156,9 +276,10 @@ public class SchedulerService
             : $"{verb} completed ({result.Message})";
     }
 
-    private void RaiseCompleted(string message)
+    private void RaiseCompleted(string message) => RaiseOnUi(ActionCompleted, message);
+
+    private static void RaiseOnUi(Action<string>? handler, string message)
     {
-        Action<string>? handler = ActionCompleted;
         if (handler is null)
         {
             return;
