@@ -27,4 +27,22 @@ public static class ByteFormat
         // machine locale, which also makes the formatter deterministic to unit test.
         return megabytes.ToString("N0", CultureInfo.InvariantCulture) + " MB";
     }
+
+    /// <summary>
+    /// Formats a byte count with a trailing percent-of-total, e.g. <c>27,817 MB (47%)</c>,
+    /// as used for the Memory page's pagefile/virtual/session-stat lines. The percent is
+    /// rounded to the nearest whole number (away from zero) and negative percents are
+    /// clamped to zero; <paramref name="bytes"/> follows the same rules as
+    /// <see cref="Megabytes"/>.
+    /// </summary>
+    public static string MegabytesWithPercent(long bytes, double percent)
+    {
+        if (percent < 0)
+        {
+            percent = 0;
+        }
+
+        int roundedPercent = (int)Math.Round(percent, MidpointRounding.AwayFromZero);
+        return $"{Megabytes(bytes)} ({roundedPercent}%)";
+    }
 }

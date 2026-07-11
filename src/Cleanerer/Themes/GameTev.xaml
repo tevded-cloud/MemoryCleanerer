@@ -267,11 +267,30 @@
         </Setter>
     </Style>
 
+    <!-- ==================== Gauge gradient brushes ====================
+         Used by the Memory page's usage gauge (see GaugeScale / GaugeLevelToBrushConverter):
+         Low = green -> accent, Mid = yellow, High = red. Horizontal, matching the project-card
+         gradient style used elsewhere in the theme. -->
+    <LinearGradientBrush x:Key="Brush.Gauge.Low" StartPoint="0,0" EndPoint="1,0">
+        <GradientStop Color="{StaticResource Color.Success}" Offset="0"/>
+        <GradientStop Color="{StaticResource Color.Accent}" Offset="1"/>
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="Brush.Gauge.Mid" StartPoint="0,0" EndPoint="1,0">
+        <GradientStop Color="{StaticResource Color.Warn}" Offset="0"/>
+        <GradientStop Color="#F3D57D" Offset="1"/>
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="Brush.Gauge.High" StartPoint="0,0" EndPoint="1,0">
+        <GradientStop Color="{StaticResource Color.Danger}" Offset="0"/>
+        <GradientStop Color="#EB7A7A" Offset="1"/>
+    </LinearGradientBrush>
+
     <!-- ==================== ProgressBar ==================== -->
     <Style x:Key="Style.ProgressBar.Slim" TargetType="ProgressBar">
         <Setter Property="Height" Value="8"/>
         <Setter Property="Background" Value="{StaticResource Brush.CardBorder}"/>
-        <Setter Property="Foreground" Value="{StaticResource Brush.Accent}"/>
+        <Setter Property="Foreground" Value="{StaticResource Brush.Gauge.Low}"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Template">
             <Setter.Value>
@@ -282,14 +301,8 @@
                                 CornerRadius="4"/>
                         <Border x:Name="PART_Indicator"
                                 HorizontalAlignment="Left"
-                                CornerRadius="4">
-                            <Border.Background>
-                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                                    <GradientStop Color="{StaticResource Color.Accent}" Offset="0"/>
-                                    <GradientStop Color="{StaticResource Color.AccentHover}" Offset="1"/>
-                                </LinearGradientBrush>
-                            </Border.Background>
-                        </Border>
+                                CornerRadius="4"
+                                Background="{TemplateBinding Foreground}"/>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

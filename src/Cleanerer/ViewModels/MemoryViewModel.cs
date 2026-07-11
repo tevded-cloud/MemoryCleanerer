@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Cleanerer.Services;
@@ -21,12 +22,54 @@ public record TaskResult(bool Ok, string Title, string Detail);
 public partial class MemoryViewModel : ObservableObject
 {
     private readonly CleanerService _cleaner = new();
+    private readonly MemoryInfoService _memoryInfo = new();
+    private readonly DispatcherTimer _timer;
 
     /// <summary>Cleanup results, newest first.</summary>
     public ObservableCollection<TaskResult> Results { get; } = new();
 
     [ObservableProperty]
     private bool _isBusy;
+
+    /// <summary>Windows' own memory-load percentage (0-100), refreshed once per second.</summary>
+    [ObservableProperty]
+    private int _loadPercent;
+
+    /// <summary>Color band for the usage gauge, derived from <see cref="LoadPercent"/> via <see cref="GaugeScale"/>.</summary>
+    [ObservableProperty]
+    private GaugeLevel _gaugeLevel;
+
+    /// <summary>Physical memory currently in use, e.g. <c>13,079 MB</c>.</summary>
+    [ObservableProperty]
+    private string _usedFormatted = "0 MB";
+
+    /// <summary>Total installed physical memory, e.g. <c>32,581 MB</c>.</summary>
+    [ObservableProperty]
+    private string _totalFormatted = "0 MB";
+
+    /// <summary>Page file usage, e.g. <c>27,817 MB (47%)</c>.</summary>
+    [ObservableProperty]
+    private string _pagefileLine = "0 MB (0%)";
+
+    /// <summary>Process virtual address space usage, e.g. <c>13,079 MB (40%)</c>.</summary>
+    [ObservableProperty]
+    private string _virtualLine = "0 MB (0%)";
+
+    /// <summary>System (file) cache size, e.g. <c>1,204 MB</c>.</summary>
+    [ObservableProperty]
+    private string _systemCacheLine = "0 MB";
+
+    /// <summary>Session average physical memory used, e.g. <c>16,662 MB (51%)</c>.</summary>
+    [ObservableProperty]
+    private string _avgLine = "0 MB (0%)";
+
+    /// <summary>Session maximum physical memory used, e.g. <c>16,662 MB (51%)</c>.</summary>
+    [ObservableProperty]
+    private string _maxLine = "0 MB (0%)";
+
+    /// <summary>Session minimum physical memory used, e.g. <c>16,662 MB (51%)</c>.</summary>
+    [ObservableProperty]
+    private string _minLine = "0 MB (0%)";
 
     /// <summary>True while no task is running; bound to button IsEnabled to block concurrency.</summary>
     public bool IsNotBusy => !IsBusy;
@@ -44,9 +87,44 @@ public partial class MemoryViewModel : ObservableObject
             OnPropertyChanged(nameof(HasResults));
             OnPropertyChanged(nameof(IsEmpty));
         };
+
+        // Populate immediately so the gauge doesn't sit at 0% for the first second, then
+        // poll once a second for the lifetime of the app (the view is never torn down).
+        RefreshSnapshot();
+
+        _timer = new DispatcherTimer
+        {
+            Interval = TimeSpan.FromSeconds(1),
+        };
+        _timer.Tick += (_, _) => RefreshSnapshot();
+        _timer.Start();
     }
 
     partial void OnIsBusyChanged(bool value) => OnPropertyChanged(nameof(IsNotBusy));
+
+    private void RefreshSnapshot()
+    {
+        MemorySnapshot snapshot = _memoryInfo.Read();
+        SessionStats stats = _memoryInfo.SessionStats;
+
+        LoadPercent = snapshot.LoadPercent;
+        GaugeLevel = GaugeScale.Classify(snapshot.LoadPercent);
+        UsedFormatted = ByteFormat.Megabytes(snapshot.UsedBytes);
+        TotalFormatted = ByteFormat.Megabytes(snapshot.TotalBytes);
+
+        double pageFilePercent = PercentOf(snapshot.PageFileUsedBytes, snapshot.PageFileTotalBytes);
+        double virtualPercent = PercentOf(snapshot.VirtualUsedBytes, snapshot.VirtualTotalBytes);
+
+        PagefileLine = ByteFormat.MegabytesWithPercent(snapshot.PageFileUsedBytes, pageFilePercent);
+        VirtualLine = ByteFormat.MegabytesWithPercent(snapshot.VirtualUsedBytes, virtualPercent);
+        SystemCacheLine = ByteFormat.Megabytes(snapshot.SystemCacheBytes);
+
+        AvgLine = ByteFormat.MegabytesWithPercent(stats.AvgUsedBytes, stats.AvgPercent);
+        MaxLine = ByteFormat.MegabytesWithPercent(stats.MaxUsedBytes, stats.MaxPercent);
+        MinLine = ByteFormat.MegabytesWithPercent(stats.MinUsedBytes, stats.MinPercent);
+    }
+
+    private static double PercentOf(long value, long total) => total <= 0 ? 0 : value * 100.0 / total;
 
     [RelayCommand]
     private async Task TrimAsync()

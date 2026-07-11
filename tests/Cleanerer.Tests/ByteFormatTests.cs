@@ -55,4 +55,37 @@ public class ByteFormatTests
     {
         Assert.Equal("0 MB", ByteFormat.Megabytes(-5_000_000));
     }
+
+    [Fact]
+    public void MegabytesWithPercent_ZeroBytesAndPercent_FormatsBothAsZero()
+    {
+        Assert.Equal("0 MB (0%)", ByteFormat.MegabytesWithPercent(0, 0));
+    }
+
+    [Fact]
+    public void MegabytesWithPercent_CanonicalExample_MatchesExpectedString()
+    {
+        // 27,817 MB (47%) — the canonical example from the Memory page pagefile line.
+        long bytes = 27_817L * 1024L * 1024L;
+        Assert.Equal("27,817 MB (47%)", ByteFormat.MegabytesWithPercent(bytes, 47.0));
+    }
+
+    [Fact]
+    public void MegabytesWithPercent_NegativePercent_IsClampedToZero()
+    {
+        Assert.Equal("0 MB (0%)", ByteFormat.MegabytesWithPercent(0, -12.5));
+    }
+
+    [Fact]
+    public void MegabytesWithPercent_RoundsToNearestWholePercent()
+    {
+        Assert.Equal("0 MB (47%)", ByteFormat.MegabytesWithPercent(0, 46.5));
+        Assert.Equal("0 MB (46%)", ByteFormat.MegabytesWithPercent(0, 46.4));
+    }
+
+    [Fact]
+    public void MegabytesWithPercent_NegativeBytes_AreClampedToZeroLikeMegabytes()
+    {
+        Assert.Equal("0 MB (10%)", ByteFormat.MegabytesWithPercent(-1024, 10));
+    }
 }

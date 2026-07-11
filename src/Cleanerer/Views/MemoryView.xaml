@@ -4,16 +4,19 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Cleanerer.ViewModels"
+             xmlns:conv="clr-namespace:Cleanerer.Converters"
              mc:Ignorable="d"
              d:DesignHeight="720" d:DesignWidth="840"
              d:DataContext="{d:DesignInstance Type=vm:MemoryViewModel}"
              Background="{StaticResource Brush.Bg}">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+        <conv:GaugeLevelToBrushConverter x:Key="GaugeLevelToBrushConverter"/>
     </UserControl.Resources>
 
     <Grid Margin="32">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
@@ -26,12 +29,92 @@
                        Style="{StaticResource Style.Text.Body}" Margin="0,0,0,24"/>
         </StackPanel>
 
+        <!-- ===================== Usage gauge card ===================== -->
+        <Border Grid.Row="1"
+                Style="{StaticResource Style.Card}"
+                Padding="24"
+                Margin="0,0,0,20">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Left: huge load percent -->
+                <StackPanel Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,32,0">
+                    <TextBlock Text="{Binding LoadPercent, StringFormat={}{0}%}"
+                               FontFamily="{StaticResource Font.Default}"
+                               FontSize="44" FontWeight="Bold"
+                               Foreground="{StaticResource Brush.TextPrimary}"/>
+                    <TextBlock Text="memory load"
+                               Style="{StaticResource Style.Text.Body}" FontSize="12" Margin="0,2,0,0"/>
+                </StackPanel>
+
+                <!-- Right: used/total line + slim gradient gauge bar -->
+                <StackPanel Grid.Row="0" Grid.Column="1" VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                        <TextBlock Text="{Binding UsedFormatted}" FontWeight="Bold" FontSize="15"
+                                   Foreground="{StaticResource Brush.TextPrimary}"/>
+                        <TextBlock Text=" / " FontWeight="Bold" FontSize="15"
+                                   Foreground="{StaticResource Brush.TextMuted}"/>
+                        <TextBlock Text="{Binding TotalFormatted}" FontWeight="Bold" FontSize="15"
+                                   Foreground="{StaticResource Brush.TextPrimary}"/>
+                    </StackPanel>
+                    <ProgressBar Style="{StaticResource Style.ProgressBar.Slim}"
+                                 Height="12"
+                                 Minimum="0" Maximum="100"
+                                 Value="{Binding LoadPercent, Mode=OneWay}"
+                                 Foreground="{Binding GaugeLevel, Converter={StaticResource GaugeLevelToBrushConverter}}"/>
+                </StackPanel>
+
+                <!-- Below: two muted stat rows -->
+                <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,22,0,0">
+                    <WrapPanel Orientation="Horizontal" Margin="0,0,0,8">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,24,4">
+                            <TextBlock Text="Pagefile: " Style="{StaticResource Style.Text.Body}" FontSize="12"/>
+                            <TextBlock Text="{Binding PagefileLine}" FontSize="12" FontWeight="SemiBold"
+                                       Foreground="{StaticResource Brush.TextPrimary}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,24,4">
+                            <TextBlock Text="Virtual: " Style="{StaticResource Style.Text.Body}" FontSize="12"/>
+                            <TextBlock Text="{Binding VirtualLine}" FontSize="12" FontWeight="SemiBold"
+                                       Foreground="{StaticResource Brush.TextPrimary}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                            <TextBlock Text="System cache: " Style="{StaticResource Style.Text.Body}" FontSize="12"/>
+                            <TextBlock Text="{Binding SystemCacheLine}" FontSize="12" FontWeight="SemiBold"
+                                       Foreground="{StaticResource Brush.TextPrimary}"/>
+                        </StackPanel>
+                    </WrapPanel>
+                    <WrapPanel Orientation="Horizontal">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,24,0">
+                            <TextBlock Text="Avg: " Style="{StaticResource Style.Text.Body}" FontSize="12"/>
+                            <TextBlock Text="{Binding AvgLine}" FontSize="12" FontWeight="SemiBold"
+                                       Foreground="{StaticResource Brush.TextPrimary}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,24,0">
+                            <TextBlock Text="Max: " Style="{StaticResource Style.Text.Body}" FontSize="12"/>
+                            <TextBlock Text="{Binding MaxLine}" FontSize="12" FontWeight="SemiBold"
+                                       Foreground="{StaticResource Brush.TextPrimary}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Min: " Style="{StaticResource Style.Text.Body}" FontSize="12"/>
+                            <TextBlock Text="{Binding MinLine}" FontSize="12" FontWeight="SemiBold"
+                                       Foreground="{StaticResource Brush.TextPrimary}"/>
+                        </StackPanel>
+                    </WrapPanel>
+                </StackPanel>
+            </Grid>
+        </Border>
+
         <!--
-            Two columns: Tasks on the left, Results on the right. Unit 3 adds the usage gauge
-            and session stats — those slot above the Tasks card (a new Auto row can be added
-            here, or the gauge card placed at the top of the left column).
+            Two columns: Tasks on the left, Results on the right.
         -->
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
