@@ -122,7 +122,7 @@
         -->
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
-                <!-- Tasks gets the wider share: its 2x2 buttons carry 18px titles. -->
+                <!-- Tasks gets the wider share: its 2x2 buttons carry 16px titles. -->
                 <ColumnDefinition Width="3*"/>
                 <ColumnDefinition Width="2*"/>
             </Grid.ColumnDefinitions>
@@ -156,10 +156,10 @@
                                 Padding="12,10"
                                 Margin="0,0,6,6">
                             <StackPanel>
-                                <TextBlock Text="Trim working sets" FontWeight="SemiBold" FontSize="18" TextTrimming="CharacterEllipsis"
+                                <TextBlock Text="Trim working sets" FontWeight="SemiBold" FontSize="16" TextTrimming="CharacterEllipsis"
                                            Foreground="{StaticResource Brush.TextPrimary}"/>
                                 <TextBlock Text="Release unused RAM."
-                                           Style="{StaticResource Style.Text.Body}" FontSize="15" Margin="0,2,0,0"
+                                           Style="{StaticResource Style.Text.Body}" FontSize="13" Margin="0,2,0,0"
                                            TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
                             </StackPanel>
                         </Button>
@@ -170,10 +170,10 @@
                                 Padding="12,10"
                                 Margin="6,0,0,6">
                             <StackPanel>
-                                <TextBlock Text="Clear system cache" FontWeight="SemiBold" FontSize="18" TextTrimming="CharacterEllipsis"
+                                <TextBlock Text="Clear system cache" FontWeight="SemiBold" FontSize="16" TextTrimming="CharacterEllipsis"
                                            Foreground="{StaticResource Brush.TextPrimary}"/>
                                 <TextBlock Text="Flush cache. Needs admin."
-                                           Style="{StaticResource Style.Text.Body}" FontSize="15" Margin="0,2,0,0"
+                                           Style="{StaticResource Style.Text.Body}" FontSize="13" Margin="0,2,0,0"
                                            TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
                             </StackPanel>
                         </Button>
@@ -184,10 +184,10 @@
                                 Padding="12,10"
                                 Margin="0,6,6,0">
                             <StackPanel>
-                                <TextBlock Text="Clear clipboard" FontWeight="SemiBold" FontSize="18" TextTrimming="CharacterEllipsis"
+                                <TextBlock Text="Clear clipboard" FontWeight="SemiBold" FontSize="16" TextTrimming="CharacterEllipsis"
                                            Foreground="{StaticResource Brush.TextPrimary}"/>
                                 <TextBlock Text="Wipe clipboard contents."
-                                           Style="{StaticResource Style.Text.Body}" FontSize="15" Margin="0,2,0,0"
+                                           Style="{StaticResource Style.Text.Body}" FontSize="13" Margin="0,2,0,0"
                                            TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
                             </StackPanel>
                         </Button>
@@ -198,10 +198,10 @@
                                 Padding="12,10"
                                 Margin="6,6,0,0">
                             <StackPanel>
-                                <TextBlock Text="Restart Explorer" FontWeight="SemiBold" FontSize="18" TextTrimming="CharacterEllipsis"
+                                <TextBlock Text="Restart Explorer" FontWeight="SemiBold" FontSize="16" TextTrimming="CharacterEllipsis"
                                            Foreground="{StaticResource Brush.TextPrimary}"/>
                                 <TextBlock Text="Reclaim shell memory."
-                                           Style="{StaticResource Style.Text.Body}" FontSize="15" Margin="0,2,0,0"
+                                           Style="{StaticResource Style.Text.Body}" FontSize="13" Margin="0,2,0,0"
                                            TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
                             </StackPanel>
                         </Button>
