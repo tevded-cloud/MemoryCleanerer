@@ -78,13 +78,9 @@ public partial class App : System.Windows.Application
         // SettingsService.SettingsChanged, so nothing else needs to poke it.
         SchedulerService.Instance.Start();
 
-        // base.OnStartup already created and showed the StartupUri window by this point, so
-        // Application.MainWindow is set. The tray icon needs the window to Show()/Activate() it
-        // back from a background-mode Hide().
-        if (MainWindow is MainWindow mainWindow)
-        {
-            TrayService.Instance.Initialize(mainWindow);
-        }
+        // The tray icon is initialized by MainWindow.OnSourceInitialized, not here: WPF creates
+        // the StartupUri window only after the Startup event completes, so Application.MainWindow
+        // is still null at this point.
 
         // Once startup settles, drop the working set: WPF/JIT startup leaves a lot of pages
         // resident that are never touched again. One-shot timer, disposes itself.

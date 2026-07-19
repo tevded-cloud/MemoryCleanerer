@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -13,14 +13,14 @@
     <RootNamespace>Cleanerer</RootNamespace>
     <Product>Memory Cleanerer</Product>
     <AssemblyTitle>Memory Cleanerer</AssemblyTitle>
-    <Version>0.1.0</Version>
-    <AssemblyVersion>0.1.0.0</AssemblyVersion>
-    <FileVersion>0.1.0.0</FileVersion>
+    <Version>0.1.1</Version>
+    <AssemblyVersion>0.1.1.0</AssemblyVersion>
+    <FileVersion>0.1.1.0</FileVersion>
     <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
     <!--
       WFAC010: WinForms' analyzer flags the manifest's PerMonitorV2 DPI settings as
       redundant with its own high-DPI API, but this is a WPF app (UseWindowsForms is
-      only enabled for the future tray icon) — the manifest is the correct, WPF-standard
+      only enabled for the future tray icon) â€” the manifest is the correct, WPF-standard
       way to declare DPI awareness, so this warning is a false positive here.
     -->
     <NoWarn>$(NoWarn);WFAC010</NoWarn>

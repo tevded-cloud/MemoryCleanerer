@@ -40,6 +40,11 @@ public partial class MainWindow : Window
         {
             source.AddHook(WindowProc);
         }
+
+        // Earliest reliable point to wire up the tray icon: the StartupUri window does not exist
+        // yet during App.OnStartup, so initializing there silently never ran and closing the
+        // window left the app running in the background with no tray icon at all.
+        TrayService.Instance.Initialize(this);
     }
 
     private IntPtr WindowProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
